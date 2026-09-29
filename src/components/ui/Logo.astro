@@ -1,7 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import logoLight from '../../assets/images/logos/fenagra-branco.png';
-import logoDark from '../../assets/images/logos/fenagra-v3.png';
+import logoDark from '../../assets/images/logos/fenagra-branco.png';
 
 export type LogoVariant = 'light' | 'dark';
 
@@ -33,7 +33,7 @@ const logoSrc = variant === 'dark' ? logoDark : logoLight;
 	}
 
 	.logo--dark img {
-		height: 68px;
+		height: 40px;
 		width: auto;
 	}
 
