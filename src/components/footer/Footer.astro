@@ -1,7 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import SocialIcon from '../ui/SocialIcon.astro';
-import logoImg from '../../assets/images/logos/fenagra-header.png';
+import logoImg from '../../assets/images/logos/fenagra-branco.png';
 import { footer as d } from '../../data/footer';
 ---
 
@@ -83,7 +83,8 @@ import { footer as d } from '../../data/footer';
 	}
 
 	.site-footer {
-		background: var(--fen-cream);
+		background: #264b26;
+		color: #fff;
 	}
 
 	.top {
@@ -112,7 +113,7 @@ import { footer as d } from '../../data/footer';
 		margin: 0;
 		font-size: 13.5px;
 		line-height: 1.6;
-		color: var(--fen-ink-3);
+		color: #fff;
 		max-width: 260px;
 	}
 
@@ -130,9 +131,9 @@ import { footer as d } from '../../data/footer';
 		height: 38px;
 		border-radius: var(--r-pill);
 		flex-shrink: 0;
-		background: #fff;
-		border: 1px solid var(--fen-line);
-		color: var(--fen-green-900);
+		background: transparent;
+		border: 1px solid rgba(255, 255, 255, 0.4);
+		color: #fff;
 		transition:
 			transform 220ms var(--ease-spring),
 			background-color 220ms var(--ease-out),
@@ -142,9 +143,9 @@ import { footer as d } from '../../data/footer';
 
 	.social:hover {
 		transform: translateY(-3px);
-		background: var(--fen-green-900);
-		color: #fff;
-		border-color: var(--fen-green-900);
+		background: #fff;
+		color: #264b26;
+		border-color: #fff;
 	}
 
 	.social :global(svg) {
@@ -158,24 +159,24 @@ import { footer as d } from '../../data/footer';
 		font-weight: 700;
 		letter-spacing: 0.04em;
 		text-transform: uppercase;
-		color: var(--fen-green-900);
+		color: #fff;
 		margin-bottom: 16px;
 	}
 
 	.col a {
 		display: block;
 		font-size: 14px;
-		color: var(--fen-ink-3);
+		color: #fff;
 		padding: 6px 0;
-		transition: color 220ms var(--ease-out);
+		transition: opacity 220ms var(--ease-out);
 	}
 
 	.col a:hover {
-		color: var(--fen-green-900);
+		opacity: 0.7;
 	}
 
 	.contact-row {
-		border-top: 1px solid var(--fen-line);
+		border-top: 1px solid rgba(255, 255, 255, 0.2);
 		padding: 26px 0;
 		display: flex;
 		justify-content: space-between;
@@ -189,25 +190,26 @@ import { footer as d } from '../../data/footer';
 		gap: 28px;
 		flex-wrap: wrap;
 		font-size: 13px;
-		color: var(--fen-ink-3);
+		color: #fff;
 	}
 
 	.contact b {
-		color: var(--fen-green-900);
+		color: #fff;
 		font-weight: 600;
 	}
 
 	.contact a {
-		color: var(--fen-ink-3);
-		transition: color 220ms var(--ease-out);
+		color: #fff;
+		transition: opacity 220ms var(--ease-out);
 	}
 
 	.contact a:hover {
-		color: var(--fen-green-900);
+		opacity: 0.7;
 	}
 
 	.legalbar {
-		background: var(--fen-green-950);
+		background: #264b26;
+		border-top: 1px solid rgba(255, 255, 255, 0.2);
 		padding: 18px 0;
 	}
 
@@ -223,7 +225,7 @@ import { footer as d } from '../../data/footer';
 		margin: 0;
 		font-size: 12px;
 		line-height: 1.6;
-		color: var(--fen-on-dark-3);
+		color: #fff;
 	}
 
 	.legal-links {
@@ -235,12 +237,12 @@ import { footer as d } from '../../data/footer';
 
 	.legal-links a {
 		font-size: 12px;
-		color: var(--fen-on-dark-2);
-		transition: color 220ms var(--ease-out);
+		color: #fff;
+		transition: opacity 220ms var(--ease-out);
 	}
 
 	.legal-links a:hover {
-		color: #fff;
+		opacity: 0.7;
 	}
 
 	@media (max-width: 980px) {
