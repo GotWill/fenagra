@@ -10,7 +10,7 @@ import { navigation } from '../../data/navigation';
 <site-header>
 	<header class="header">
 		<div class="header-inner">
-			<Logo variant="light" />
+			<Logo variant="light" priority/>
 
 			<nav class="menu" aria-label="Menu principal">
 				{navigation.map((group, i) => <NavDropdown group={group} id={String(i)} />)}
