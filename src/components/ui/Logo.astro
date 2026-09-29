@@ -1,22 +1,40 @@
 ---
-import { Image } from 'astro:assets';
-import logoLight from '../../assets/images/logos/fenagra-branco.png';
-import logoDark from '../../assets/images/logos/fenagra-branco.png';
+import { Image } from "astro:assets";
+import logoLight from "../../assets/images/logos/fenagra-branco.png";
+import logoDark from "../../assets/images/logos/fenagra-branco.png";
 
-export type LogoVariant = 'light' | 'dark';
+export type LogoVariant = "light" | "dark";
 
 interface Props {
 	variant?: LogoVariant;
 	href?: string;
 	class?: string;
+	priority?: boolean;
 }
 
-const { variant = 'light', href = '/', class: className } = Astro.props;
-const logoSrc = variant === 'dark' ? logoDark : logoLight;
+const {
+	variant = "light",
+	href = "/",
+	priority,
+	class: className,
+} = Astro.props;
+const logoSrc = variant === "dark" ? logoDark : logoLight;
 ---
 
-<a href={href} class:list={['logo', `logo--${variant}`, className]} aria-label="FENAGRA — página inicial">
-	<Image src={logoSrc} alt="FENAGRA" width={logoSrc.width} height={logoSrc.height} layout="none" />
+<a
+	href={href}
+	class:list={["logo", `logo--${variant}`, className]}
+	aria-label="FENAGRA — página inicial"
+>
+	<Image
+		src={logoSrc}
+		alt="FENAGRA"
+		width={logoSrc.width}
+		height={logoSrc.height}
+		layout="none"
+		loading={priority ? "eager" : "lazy"}
+		fetchpriority={priority ? "high" : undefined}
+	/>
 </a>
 
 <style>
