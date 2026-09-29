@@ -1,0 +1,74 @@
+---
+import type { Stat } from '../../data/stats';
+
+interface Props {
+	items?: Stat[];
+	class?: string;
+}
+
+const { items = [], class: className } = Astro.props;
+---
+
+<dl class:list={['stats', className]}>
+	{
+		items.map((item) => (
+			<div class="stat">
+				<dt>{item.label}</dt>
+				<dd>{item.value}</dd>
+			</div>
+		))
+	}
+</dl>
+
+<style>
+	.stats {
+		margin: 0;
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		border-top: 1.5px solid var(--fen-stone);
+	}
+
+	.stat {
+		display: flex;
+		flex-direction: column-reverse;
+		padding-top: 20px;
+	}
+
+	.stat:not(:first-child) {
+		border-left: 1px solid var(--fen-line);
+		padding-left: 20px;
+		padding-right: 20px;
+	}
+
+	.stat dt {
+		margin: 0;
+		font-size: 14px;
+		color: var(--fen-ink-3);
+	}
+
+	.stat dd {
+		margin: 0;
+		font-weight: 700;
+		font-size: 34px;
+		line-height: 1;
+		letter-spacing: -0.02em;
+		color: var(--fen-green-900);
+	}
+
+	@media (max-width: 640px) {
+		.stats {
+			grid-template-columns: 1fr;
+		}
+
+		.stat:not(:first-child) {
+			border-left: none;
+			padding-left: 0;
+			padding-right: 0;
+			border-top: 1px solid var(--fen-line);
+		}
+
+		.stat dd {
+			font-size: 30px;
+		}
+	}
+</style>

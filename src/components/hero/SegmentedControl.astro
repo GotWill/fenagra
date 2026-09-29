@@ -1,0 +1,147 @@
+---
+interface Props {
+	labelA: string;
+	labelB: string;
+	ariaLabel?: string;
+}
+
+const { labelA, labelB, ariaLabel = 'Escolha seu perfil' } = Astro.props;
+---
+
+<segmented-control>
+	<div class="seg" role="group" aria-label={ariaLabel}>
+		<button type="button" class="seg-btn" aria-pressed="true" data-target="a">{labelA}</button>
+		<button type="button" class="seg-btn" aria-pressed="false" data-target="b">{labelB}</button>
+	</div>
+	<div class="panels">
+		<div class="panel" data-panel="a">
+			<slot name="a" />
+		</div>
+		<div class="panel" data-panel="b" hidden>
+			<slot name="b" />
+		</div>
+	</div>
+</segmented-control>
+
+<style>
+	segmented-control {
+		display: flex;
+		flex-direction: column;
+		gap: 18px;
+	}
+
+	.seg {
+		position: relative;
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 4px;
+		padding: 4px;
+		background: var(--fen-cream);
+		border-radius: var(--r-pill);
+	}
+
+	.seg::before {
+		content: '';
+		position: absolute;
+		top: 4px;
+		bottom: 4px;
+		left: 4px;
+		width: calc(50% - 6px);
+		border-radius: var(--r-pill);
+		background: var(--fen-green-900);
+		box-shadow: 0 6px 14px -6px rgba(15, 30, 14, 0.5);
+		transition: transform 320ms var(--ease-spring);
+	}
+
+	.seg:has(.seg-btn:nth-child(2)[aria-pressed='true'])::before {
+		transform: translateX(calc(100% + 4px));
+	}
+
+	.seg-btn {
+		position: relative;
+		z-index: 1;
+		height: 44px;
+		border: none;
+		border-radius: var(--r-pill);
+		background: transparent;
+		font-family: var(--fen-font);
+		font-size: 14px;
+		font-weight: 600;
+		color: var(--fen-green-900);
+		cursor: pointer;
+		transition: color var(--dur) var(--ease-out);
+	}
+
+	.seg-btn[aria-pressed='true'] {
+		color: #fff;
+	}
+
+	.panel[hidden] {
+		display: none;
+	}
+
+	.panel {
+		animation: panel-in var(--dur) var(--ease-out);
+	}
+
+	@keyframes panel-in {
+		from {
+			opacity: 0;
+			transform: translateY(8px);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.seg::before {
+			transition: none;
+		}
+
+		.panel {
+			animation: none;
+		}
+	}
+</style>
+
+<script>
+	class SegmentedControl extends HTMLElement {
+		private buttons: HTMLButtonElement[] = [];
+		private panels: Record<string, HTMLElement | null> = {};
+
+		connectedCallback() {
+			this.buttons = Array.from(this.querySelectorAll<HTMLButtonElement>('.seg-btn'));
+			this.panels = {
+				a: this.querySelector('[data-panel="a"]'),
+				b: this.querySelector('[data-panel="b"]'),
+			};
+
+			this.buttons.forEach((button) => {
+				button.addEventListener('click', () => this.activate(button.dataset.target!));
+			});
+
+			this.querySelector('.seg')!.addEventListener('keydown', (event) => {
+				const key = (event as KeyboardEvent).key;
+				if (key !== 'ArrowRight' && key !== 'ArrowLeft') return;
+				event.preventDefault();
+				const current = this.buttons.findIndex((b) => b.getAttribute('aria-pressed') === 'true');
+				const delta = key === 'ArrowRight' ? 1 : -1;
+				const next = this.buttons[(current + delta + this.buttons.length) % this.buttons.length];
+				next.focus();
+				this.activate(next.dataset.target!);
+			});
+		}
+
+		activate(target: string) {
+			this.buttons.forEach((button) => {
+				button.setAttribute('aria-pressed', String(button.dataset.target === target));
+			});
+			Object.entries(this.panels).forEach(([key, panel]) => {
+				if (panel) panel.hidden = key !== target;
+			});
+			this.dispatchEvent(
+				new CustomEvent('segmented-control:change', { detail: target, bubbles: true }),
+			);
+		}
+	}
+
+	customElements.define('segmented-control', SegmentedControl);
+</script>

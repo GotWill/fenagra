@@ -1,0 +1,65 @@
+:root {
+	/* Verdes de marca */
+	--fen-green-950: #1f3b1c;
+	--fen-green-900: #274b23;
+	--fen-green-850: #2f522b;
+	--fen-green-800: #33572f;
+	--fen-green-750: #3a6236;
+	--fen-green-chip: #2a5c30;
+	--fen-green-line: #365a31;
+	--fen-green-edge: #4e7a45;
+	--fen-green-sage: #8fb07f;
+	--fen-leaf: #7ba13e;
+
+	/* Acentos */
+	--fen-accent: #c3d337;
+	--fen-lime-mist: #e4eca0;
+	--fen-butter: #f4ebaa;
+	--fen-cream: #f6f5ec;
+
+	/* Neutros */
+	--fen-line: #e3e3d3;
+	--fen-stone: #cfcfbe;
+	--fen-ivory: #fbf7e4;
+
+	/* Texto */
+	--fen-ink: #1e2a1c;
+	--fen-ink-2: #3a4535;
+	--fen-ink-3: #56604f;
+	--fen-on-dark: #e8efe0;
+	--fen-on-dark-2: #d5e0c8;
+	--fen-on-dark-3: #c9d6bd;
+
+	--accent-hover: color-mix(in srgb, var(--fen-accent) 82%, #fff);
+
+	/* Tipografia */
+	--fen-font: var(--font-poppins), 'Helvetica Neue', sans-serif;
+
+	/* Raios */
+	--r-6: 6px;
+	--r-12: 12px;
+	--r-18: 18px;
+	--r-20: 20px;
+	--r-24: 24px;
+	--r-28: 28px;
+	--r-32: 32px;
+	--r-pill: 999px;
+
+	/* Sombras — sempre em tom verde */
+	--sh-header: 0 12px 32px rgba(15, 30, 14, 0.22);
+	--sh-pop: 0 24px 48px rgba(15, 30, 14, 0.22);
+	--sh-card: 0 24px 48px rgba(15, 30, 14, 0.28);
+	--sh-btn-dark: 0 12px 24px -10px rgba(15, 30, 14, 0.6);
+	--sh-btn-accent: 0 12px 26px -10px rgba(120, 140, 20, 0.75);
+
+	/* Movimento */
+	--ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+	--ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+	--dur-press: 90ms;
+	--dur-fast: 160ms;
+	--dur: 220ms;
+	--dur-slow: 620ms;
+
+	/* Layout */
+	--gutter: clamp(20px, 8.33vw, 120px);
+}

@@ -1,0 +1,146 @@
+---
+import SegmentedControl from './SegmentedControl.astro';
+import ReservedMeter from './ReservedMeter.astro';
+import Button from '../ui/Button.astro';
+import Icon from '../ui/Icon.astro';
+import { event } from '../../data/event';
+
+interface Props {
+	class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<div class:list={['card', className]}>
+	<SegmentedControl labelA="Quero visitar" labelB="Quero expor" ariaLabel="Escolha seu perfil">
+		<Fragment slot="a">
+			<div class="panel-content">
+				<h3 class="ttl">Entrada gratuita para profissionais do setor</h3>
+				<p class="txt">
+					Garanta seu acesso à feira e à programação completa de {event.edition}.
+				</p>
+				<Button variant="primary" href="/credenciamento" class="visit-cta">
+					Fazer meu credenciamento
+					<Icon name="arrow" size={16} slot="icon" />
+				</Button>
+			</div>
+		</Fragment>
+		<Fragment slot="b">
+			<div class="panel-content">
+				<h3 class="ttl">Estandes {event.edition} já à venda</h3>
+				<ReservedMeter percent={event.reservedAreaPercent} />
+				<div class="actions">
+					<Button variant="accent" href="/expor">
+						Solicitar proposta
+						<Icon name="arrow" size={16} slot="icon" />
+					</Button>
+					<a class="link" href={event.whatsappCommercial}>{event.whatsappLabel}</a>
+				</div>
+			</div>
+		</Fragment>
+	</SegmentedControl>
+</div>
+
+<style>
+	.card {
+		width: 440px;
+		max-width: 100%;
+		padding: 24px;
+		background: #fff;
+		border-radius: var(--r-24);
+		box-shadow: var(--sh-card);
+	}
+
+	.panel-content {
+		display: flex;
+		flex-direction: column;
+		gap: 14px;
+	}
+
+	.ttl {
+		margin: 0;
+		font-size: 20px;
+		font-weight: 600;
+		line-height: 1.3;
+		color: var(--fen-green-900);
+	}
+
+	.txt {
+		margin: 0;
+		font-size: 14px;
+		line-height: 1.55;
+		color: var(--fen-ink-2);
+	}
+
+	.actions {
+		display: flex;
+		align-items: center;
+		gap: 16px;
+		flex-wrap: wrap;
+	}
+
+	.panel-content :global(.visit-cta) {
+		align-self: flex-start;
+	}
+
+	.link {
+		font-size: 14px;
+		font-weight: 600;
+		color: var(--fen-green-900);
+		text-decoration: none;
+		padding-bottom: 2px;
+		background: linear-gradient(currentColor, currentColor) 0 100% / 100% 1.5px no-repeat;
+		transition: background-size var(--dur) var(--ease-out);
+	}
+
+	.link:hover {
+		opacity: 1;
+		animation: link-grow var(--dur) var(--ease-out) forwards;
+	}
+
+	@keyframes link-grow {
+		0% {
+			background-position: 100% 100%;
+			background-size: 100% 1.5px;
+		}
+		49% {
+			background-position: 100% 100%;
+			background-size: 0 1.5px;
+		}
+		50% {
+			background-position: 0 100%;
+		}
+		100% {
+			background-position: 0 100%;
+			background-size: 100% 1.5px;
+		}
+	}
+
+	@media (max-width: 640px) {
+		.card {
+			padding: 18px;
+		}
+
+		.ttl {
+			font-size: 18px;
+		}
+
+		.txt {
+			font-size: 13px;
+			line-height: 1.5;
+		}
+
+		.panel-content :global(.visit-cta) {
+			width: 100%;
+			height: 52px;
+			font-size: 15px;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.link:hover {
+			animation: none;
+		}
+	}
+</style>

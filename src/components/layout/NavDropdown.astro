@@ -1,0 +1,208 @@
+---
+import type { NavGroup } from '../../data/navigation';
+
+interface Props {
+	group: NavGroup;
+	id: string;
+}
+
+const { group, id } = Astro.props;
+const buttonId = `navbtn-${id}`;
+const panelId = `navdd-${id}`;
+---
+
+<nav-dropdown class="nav-item">
+	<button type="button" class="nav-btn" id={buttonId} aria-expanded="false" aria-controls={panelId}>
+		<span>{group.label}</span>
+		<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+			<path d="M6 9l6 6 6-6" />
+		</svg>
+	</button>
+	<div class="dd" id={panelId} role="menu" aria-labelledby={buttonId}>
+		{
+			group.links.map((link) => (
+				<a href={link.href} role="menuitem">
+					<span>
+						<span class="t1">{link.title}</span>
+						{link.description && <span class="t2">{link.description}</span>}
+					</span>
+					<svg class="arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+						<path d="M5 12h14M13 6l6 6-6 6" />
+					</svg>
+				</a>
+			))
+		}
+	</div>
+</nav-dropdown>
+
+<style>
+	.nav-item {
+		position: relative;
+	}
+
+	.nav-btn {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		height: 40px;
+		padding: 0 14px;
+		border: none;
+		border-radius: var(--r-pill);
+		background: transparent;
+		color: #fff;
+		font-family: var(--fen-font);
+		font-size: 14px;
+		font-weight: 500;
+		cursor: pointer;
+		white-space: nowrap;
+		transition: background-color 220ms var(--ease-out);
+	}
+
+	.nav-btn:hover,
+	.nav-item.is-open .nav-btn {
+		background: rgba(255, 255, 255, 0.16);
+	}
+
+	.nav-btn svg {
+		transition: transform 220ms var(--ease-spring);
+	}
+
+	.nav-item.is-open .nav-btn svg {
+		transform: rotate(180deg);
+	}
+
+	.dd {
+		position: absolute;
+		top: calc(100% + 8px);
+		left: 50%;
+		width: 320px;
+		border-radius: 16px;
+		padding: 10px;
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+		z-index: 30;
+		background: var(--fen-green-950);
+		box-shadow: 0 24px 48px rgba(15, 30, 14, 0.35);
+		opacity: 0;
+		visibility: hidden;
+		transform: translate(-50%, -6px);
+		transition:
+			opacity 220ms var(--ease-out),
+			transform 220ms var(--ease-out),
+			visibility 0s linear 220ms;
+	}
+
+	.nav-item.is-open .dd {
+		opacity: 1;
+		visibility: visible;
+		transform: translate(-50%, 0);
+		transition-delay: 0s;
+	}
+
+	.dd a {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 10px;
+		padding: 11px 13px;
+		border-radius: 11px;
+		text-decoration: none;
+		color: var(--fen-on-dark);
+		transition: background-color 220ms var(--ease-out);
+	}
+
+	.dd a:hover {
+		background: rgba(255, 255, 255, 0.08);
+	}
+
+	.dd .t1 {
+		display: block;
+		font-weight: 600;
+		font-size: 14px;
+		color: #fff;
+	}
+
+	.dd .t2 {
+		display: block;
+		margin-top: 2px;
+		font-size: 12px;
+		line-height: 1.4;
+		color: var(--fen-on-dark-2);
+	}
+
+	.dd .arrow {
+		flex-shrink: 0;
+		color: var(--fen-leaf);
+		transition: transform 220ms var(--ease-spring);
+	}
+
+	.dd a:hover .arrow {
+		transform: translateX(3px);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.nav-btn,
+		.nav-btn svg,
+		.dd,
+		.dd a,
+		.dd .arrow {
+			transition-duration: 1ms !important;
+		}
+	}
+</style>
+
+<script>
+	class NavDropdown extends HTMLElement {
+		private wired = false;
+
+		connectedCallback() {
+			if (this.wired) return;
+			this.wired = true;
+
+			const btn = this.querySelector<HTMLButtonElement>('.nav-btn');
+			if (!btn) return;
+
+			let closeTimer: ReturnType<typeof setTimeout>;
+
+			const setOpen = (isOpen: boolean) => {
+				this.classList.toggle('is-open', isOpen);
+				btn.setAttribute('aria-expanded', String(isOpen));
+			};
+
+			const open = () => {
+				clearTimeout(closeTimer);
+				setOpen(true);
+			};
+			const scheduleClose = () => {
+				closeTimer = setTimeout(() => setOpen(false), 160);
+			};
+
+			// Mouse (desktop)
+			this.addEventListener('mouseenter', open);
+			this.addEventListener('mouseleave', scheduleClose);
+
+			// Teclado (Tab entra e sai do grupo)
+			this.addEventListener('focusin', open);
+			this.addEventListener('focusout', (e: FocusEvent) => {
+				if (!this.contains(e.relatedTarget as Node)) scheduleClose();
+			});
+
+			// Toque: como não existe hover, o clique alterna abrir/fechar
+			btn.addEventListener('click', (e) => {
+				e.preventDefault();
+				this.classList.contains('is-open') ? setOpen(false) : open();
+			});
+
+			// Esc fecha e devolve o foco ao botão
+			this.addEventListener('keydown', (e: KeyboardEvent) => {
+				if (e.key === 'Escape') {
+					setOpen(false);
+					btn.focus();
+				}
+			});
+		}
+	}
+
+	customElements.define('nav-dropdown', NavDropdown);
+</script>

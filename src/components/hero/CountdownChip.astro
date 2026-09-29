@@ -1,0 +1,73 @@
+---
+import Chip from '../ui/Chip.astro';
+import { event } from '../../data/event';
+---
+
+<countdown-days data-target={event.countdownTarget}>
+	<Chip variant="accent" class="countdown-chip">
+		<span class="dot" aria-hidden="true"></span>
+		<span class="label">{event.dateLabel}</span>
+	</Chip>
+</countdown-days>
+
+<style>
+	countdown-days {
+		display: inline-flex;
+	}
+
+	.countdown-chip {
+		gap: 10px;
+	}
+
+	.dot {
+		position: relative;
+		width: 8px;
+		height: 8px;
+		flex-shrink: 0;
+		border-radius: 50%;
+		background: var(--fen-green-950);
+	}
+
+	.dot::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border-radius: 50%;
+		background: inherit;
+		animation: dot-pulse 2s var(--ease-out) infinite;
+	}
+
+	@keyframes dot-pulse {
+		0% {
+			transform: scale(1);
+			opacity: 0.6;
+		}
+		100% {
+			transform: scale(2.6);
+			opacity: 0;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.dot::after {
+			animation: none;
+			opacity: 0;
+		}
+	}
+</style>
+
+<script>
+	class CountdownDays extends HTMLElement {
+		connectedCallback() {
+			const target = this.dataset.target;
+			const label = this.querySelector<HTMLElement>('.label');
+			if (!target || !label) return;
+
+			const diff = new Date(target).getTime() - Date.now();
+			const days = Math.max(0, Math.ceil(diff / 86_400_000));
+			label.textContent = `Faltam ${days} dias`;
+		}
+	}
+
+	customElements.define('countdown-days', CountdownDays);
+</script>

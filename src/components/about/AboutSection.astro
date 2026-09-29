@@ -1,0 +1,297 @@
+---
+import Button from '../ui/Button.astro';
+import Icon from '../ui/Icon.astro';
+import SegmentChips from './SegmentChips.astro';
+import VideoFrame from './VideoFrame.astro';
+import YouTubeEmbed from './YouTubeEmbed.astro';
+import { about } from '../../data/about';
+import { segments } from '../../data/segments';
+import { aboutVideo } from '../../data/video';
+
+interface Props {
+	class?: string;
+}
+
+const { class: className } = Astro.props;
+
+/** Ordem curada dos chips, independente da ordem numérica de segments.ts. */
+const CHIP_ORDER = ['01', '02', '03', '04', '07', '05', '08'];
+const chipItems = CHIP_ORDER.map((num) => segments.find((s) => s.number === num))
+	.filter((s): s is (typeof segments)[number] => Boolean(s))
+	.map((s) => s.shortLabel ?? s.label);
+---
+
+<about-reveal>
+	<section class:list={['about', className]} aria-labelledby="about-title">
+		<div class="decoration" aria-hidden="true"></div>
+
+		<div class="container">
+			<div class="col-text">
+				<span class="eyebrow">{about.eyebrow}</span>
+				<h2 id="about-title" class="title">{about.title}</h2>
+				<p class="body">{about.body}</p>
+
+				<div class="list-block">
+					<p class="list-label">{about.listLabel}</p>
+					<SegmentChips items={chipItems} />
+				</div>
+
+				<div class="actions">
+					<Button variant="primary" href={about.primaryCta.href}>
+						{about.primaryCta.label}
+						<Icon name="arrow" size={16} slot="icon" />
+					</Button>
+					<a class="link" href={about.secondaryCta.href}>{about.secondaryCta.label}</a>
+				</div>
+			</div>
+
+			<div class="col-video">
+				<VideoFrame>
+					<YouTubeEmbed youtubeId={aboutVideo.youtubeId} title={aboutVideo.title} />
+				</VideoFrame>
+			</div>
+		</div>
+	</section>
+</about-reveal>
+
+<style>
+	.about {
+		position: relative;
+		overflow: hidden;
+		background: var(--fen-cream);
+		padding: 112px var(--gutter);
+	}
+
+	.decoration {
+		position: absolute;
+		left: -180px;
+		bottom: -260px;
+		width: 560px;
+		height: 560px;
+		border-radius: 50%;
+		border: 1.5px solid var(--fen-line);
+		pointer-events: none;
+	}
+
+	.container {
+		position: relative;
+		display: flex;
+		align-items: center;
+		gap: 88px;
+	}
+
+	.col-text {
+		flex-shrink: 0;
+		width: 680px;
+		display: flex;
+		flex-direction: column;
+		gap: 28px;
+	}
+
+	.eyebrow {
+		font-size: 13px;
+		font-weight: 600;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		color: var(--fen-leaf);
+	}
+
+	.title {
+		margin: 0;
+		font-weight: 700;
+		font-size: 44px;
+		line-height: 1.1;
+		letter-spacing: -0.02em;
+		color: var(--fen-green-900);
+	}
+
+	.body {
+		margin: 0;
+		font-size: 17px;
+		line-height: 1.65;
+		color: var(--fen-ink-2);
+	}
+
+	.list-block {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+	}
+
+	.list-label {
+		margin: 0;
+		font-size: 14px;
+		font-weight: 600;
+		color: var(--fen-ink);
+	}
+
+	.actions {
+		display: flex;
+		align-items: center;
+		gap: 16px;
+	}
+
+	.link {
+		font-size: 14px;
+		font-weight: 600;
+		color: var(--fen-green-900);
+		text-decoration: none;
+		padding-bottom: 2px;
+		background: linear-gradient(currentColor, currentColor) 0 100% / 100% 1.5px no-repeat;
+		transition: background-size var(--dur) var(--ease-out);
+	}
+
+	.link:hover {
+		opacity: 1;
+		animation: link-grow var(--dur) var(--ease-out) forwards;
+	}
+
+	@keyframes link-grow {
+		0% {
+			background-position: 100% 100%;
+			background-size: 100% 1.5px;
+		}
+		49% {
+			background-position: 100% 100%;
+			background-size: 0 1.5px;
+		}
+		50% {
+			background-position: 0 100%;
+		}
+		100% {
+			background-position: 0 100%;
+			background-size: 100% 1.5px;
+		}
+	}
+
+	.col-video {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		gap: 40px;
+		min-width: 0;
+	}
+
+	/* ===== Entrada orquestrada (progressive enhancement) ===== */
+	:global(html.js) .about .col-text {
+		opacity: 0;
+		transform: translateY(16px);
+		transition:
+			opacity 700ms var(--ease-out),
+			transform 700ms var(--ease-out);
+	}
+
+	:global(html.js) .about.is-visible .col-text {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
+	:global(html.js) .about :global(.accent-block) {
+		transform: translate(-32px, -32px);
+		transition: transform 900ms var(--ease-out) 150ms;
+	}
+
+	:global(html.js) .about.is-visible :global(.accent-block) {
+		transform: translate(0, 0);
+	}
+
+	@media (max-width: 1180px) {
+		.container {
+			gap: 56px;
+		}
+
+		.col-text {
+			width: 580px;
+		}
+
+		.title {
+			font-size: 38px;
+		}
+	}
+
+	@media (max-width: 1024px) {
+		.container {
+			flex-direction: column;
+			align-items: stretch;
+		}
+
+		.col-text {
+			width: 100%;
+			max-width: 680px;
+		}
+	}
+
+	@media (max-width: 640px) {
+		.about {
+			padding: 40px 20px 72px;
+		}
+
+		.title {
+			font-size: clamp(28px, 8vw, 34px);
+		}
+
+		.body {
+			font-size: 16px;
+		}
+
+		.actions {
+			flex-direction: column;
+			align-items: stretch;
+			gap: 16px;
+		}
+
+		.actions :global(.btn) {
+			width: 100%;
+			height: 52px;
+			font-size: 15px;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		:global(html.js) .about .col-text,
+		:global(html.js) .about :global(.accent-block) {
+			opacity: 1 !important;
+			transform: none !important;
+			transition: none !important;
+		}
+
+		.link:hover {
+			animation: none;
+		}
+	}
+</style>
+
+<script>
+	class AboutReveal extends HTMLElement {
+		private observer: IntersectionObserver | null = null;
+
+		connectedCallback() {
+			const section = this.querySelector<HTMLElement>('section');
+			if (!section) return;
+
+			if (!('IntersectionObserver' in window)) {
+				section.classList.add('is-visible');
+				return;
+			}
+
+			this.observer = new IntersectionObserver(
+				(entries) => {
+					for (const entry of entries) {
+						if (entry.isIntersecting) {
+							section.classList.add('is-visible');
+							this.observer?.unobserve(section);
+						}
+					}
+				},
+				{ threshold: 0.25 },
+			);
+			this.observer.observe(section);
+		}
+
+		disconnectedCallback() {
+			this.observer?.disconnect();
+		}
+	}
+
+	customElements.define('about-reveal', AboutReveal);
+</script>

@@ -1,0 +1,100 @@
+---
+interface Props {
+	percent: number;
+	label?: string;
+}
+
+const { percent, label = 'Área reservada' } = Astro.props;
+const clamped = Math.min(100, Math.max(0, percent));
+---
+
+<reserved-meter data-percent={clamped}>
+	<div class="meter-head">
+		<span class="lbl">{label}</span>
+		<span class="val">{clamped}%</span>
+	</div>
+	<div class="track" role="meter" aria-valuenow={clamped} aria-valuemin="0" aria-valuemax="100" aria-label={label}>
+		<div class="fill"></div>
+	</div>
+</reserved-meter>
+
+<style>
+	reserved-meter {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	.meter-head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		font-size: 13px;
+		color: var(--fen-ink-3);
+	}
+
+	.val {
+		font-weight: 700;
+		color: var(--fen-ink);
+	}
+
+	.track {
+		height: 8px;
+		border-radius: var(--r-pill);
+		background: var(--fen-cream);
+		overflow: hidden;
+	}
+
+	.fill {
+		height: 100%;
+		width: 0%;
+		border-radius: var(--r-pill);
+		background: linear-gradient(90deg, var(--fen-leaf), var(--fen-accent));
+		transition: width 1.2s var(--ease-out);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.fill {
+			transition: none;
+		}
+	}
+</style>
+
+<script>
+	class ReservedMeter extends HTMLElement {
+		private fill!: HTMLElement;
+		private percent = 0;
+		private panel: HTMLElement | null = null;
+		private observer?: MutationObserver;
+
+		connectedCallback() {
+			this.fill = this.querySelector('.fill')!;
+			this.percent = Number(this.dataset.percent) || 0;
+			this.panel = this.closest<HTMLElement>('[data-panel]');
+
+			this.animateFill();
+
+			if (this.panel) {
+				this.observer = new MutationObserver(() => {
+					if (!this.panel!.hidden) this.animateFill();
+				});
+				this.observer.observe(this.panel, { attributes: true, attributeFilter: ['hidden'] });
+			}
+		}
+
+		disconnectedCallback() {
+			this.observer?.disconnect();
+		}
+
+		animateFill() {
+			this.fill.style.width = '0%';
+			requestAnimationFrame(() => {
+				requestAnimationFrame(() => {
+					this.fill.style.width = `${this.percent}%`;
+				});
+			});
+		}
+	}
+
+	customElements.define('reserved-meter', ReservedMeter);
+</script>

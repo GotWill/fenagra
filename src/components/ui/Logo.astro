@@ -1,0 +1,45 @@
+---
+import { Image } from 'astro:assets';
+import logoLight from '../../assets/images/logos/fenagra-branco.png';
+import logoDark from '../../assets/images/logos/fenagra-v3.png';
+
+export type LogoVariant = 'light' | 'dark';
+
+interface Props {
+	variant?: LogoVariant;
+	href?: string;
+	class?: string;
+}
+
+const { variant = 'light', href = '/', class: className } = Astro.props;
+const logoSrc = variant === 'dark' ? logoDark : logoLight;
+---
+
+<a href={href} class:list={['logo', `logo--${variant}`, className]} aria-label="FENAGRA — página inicial">
+	<Image src={logoSrc} alt="FENAGRA" width={logoSrc.width} height={logoSrc.height} layout="none" />
+</a>
+
+<style>
+	.logo {
+		display: flex;
+		align-items: center;
+		line-height: 1;
+		text-decoration: none;
+	}
+
+	.logo--light img {
+		height: 56px;
+		width: auto;
+	}
+
+	.logo--dark img {
+		height: 68px;
+		width: auto;
+	}
+
+	@media (max-width: 640px) {
+		.logo--light img {
+			height: 42px;
+		}
+	}
+</style>

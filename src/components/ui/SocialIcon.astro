@@ -1,0 +1,26 @@
+---
+import instagramRaw from '../../assets/images/icons/instagram.svg?raw';
+import facebookRaw from '../../assets/images/icons/facebook.svg?raw';
+import xTwitterRaw from '../../assets/images/icons/x-twitter.svg?raw';
+import linkedinRaw from '../../assets/images/icons/linkedin.svg?raw';
+import youtubeRaw from '../../assets/images/icons/youtube.svg?raw';
+
+export interface Props {
+	name: 'Instagram' | 'Facebook' | 'X (antigo Twitter)' | 'LinkedIn' | 'YouTube';
+}
+const { name } = Astro.props;
+
+const ICONS = {
+	Instagram: instagramRaw,
+	Facebook: facebookRaw,
+	'X (antigo Twitter)': xTwitterRaw,
+	LinkedIn: linkedinRaw,
+	YouTube: youtubeRaw,
+} satisfies Record<Props['name'], string>;
+
+// Os SVGs (Font Awesome) não têm fill nos paths — injeta currentColor e
+// aria-hidden na tag raiz pra herdar a cor do link e ficar invisível a leitores de tela.
+const markup = ICONS[name].replace('<svg ', '<svg fill="currentColor" aria-hidden="true" ');
+---
+
+<Fragment set:html={markup} />

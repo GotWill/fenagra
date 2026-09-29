@@ -1,0 +1,187 @@
+---
+import { Image } from 'astro:assets';
+import aerea from '../../assets/images/location/aerea.webp';
+import { location as d } from '../../data/location';
+---
+
+<section class="location" aria-labelledby="location-title">
+	<div class="loc-head">
+		<div class="loc-head-inner">
+			<span class="eyebrow">{d.eyebrow}</span>
+			<h2 id="location-title">{d.title}</h2>
+		</div>
+	</div>
+
+	<div class="loc-split">
+		<div class="loc-photo">
+			<Image
+				src={aerea}
+				alt={d.photoAlt}
+				widths={[480, 720, 960, 1280, 1600]}
+				sizes="(max-width: 900px) 100vw, 50vw"
+				loading="lazy"
+				decoding="async"
+				layout="none"
+			/>
+			<span class="loc-chip" aria-hidden="true">{d.chip.toUpperCase()}</span>
+		</div>
+		<div class="loc-map">
+			<iframe
+				src={d.mapEmbedSrc}
+				loading="lazy"
+				referrerpolicy="strict-origin-when-cross-origin"
+				allowfullscreen
+				title={d.mapTitle}
+			></iframe>
+		</div>
+	</div>
+
+	<div class="loc-band">
+		<div class="loc-band-inner">
+			{
+				d.contacts.map((c) => (
+					<div>
+						<b>{c.label}</b>
+						<a
+							href={c.href}
+							target={c.href.startsWith('http') ? '_blank' : undefined}
+							rel={c.href.startsWith('http') ? 'noopener' : undefined}
+						>
+							{c.text}
+						</a>
+						{c.extra && <span>{c.extra}</span>}
+					</div>
+				))
+			}
+		</div>
+	</div>
+</section>
+
+<style>
+	.eyebrow {
+		font-size: 13px;
+		font-weight: 600;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		color: var(--fen-lime-mist);
+	}
+
+	/* ---------- faixa de título ---------- */
+	.loc-head {
+		background: var(--fen-green-950);
+		padding: 52px var(--gutter);
+	}
+
+	.loc-head-inner {
+		max-width: 1200px;
+		margin: 0 auto;
+	}
+
+	.loc-head-inner h2 {
+		margin: 8px 0 0;
+		font-weight: 700;
+		font-size: clamp(28px, 3.4vw, 38px);
+		color: #fff;
+	}
+
+	/* ---------- split foto | mapa ---------- */
+	.loc-split {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		width: 100%;
+		height: 600px;
+	}
+
+	.loc-split > div {
+		position: relative;
+		overflow: hidden;
+	}
+
+	.loc-photo :global(img) {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		display: block;
+	}
+
+	.loc-photo::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(180deg, rgba(31, 59, 28, 0) 55%, rgba(31, 59, 28, 0.7) 100%);
+	}
+
+	.loc-chip {
+		position: absolute;
+		left: 56px;
+		bottom: 32px;
+		z-index: 1;
+		padding: 9px 16px;
+		border-radius: var(--r-pill);
+		background: #fff;
+		color: var(--fen-green-900);
+		font-size: 12.5px;
+		font-weight: 700;
+	}
+
+	.loc-map iframe {
+		width: 100%;
+		height: 100%;
+		border: 0;
+		display: block;
+	}
+
+	/* ---------- faixa de contato ---------- */
+	.loc-band {
+		background: var(--fen-green-950);
+		padding: 44px var(--gutter);
+		border-top: 1px solid var(--fen-green-line);
+	}
+
+	.loc-band-inner {
+		max-width: 1200px;
+		margin: 0 auto;
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 56px;
+	}
+
+	.loc-band-inner div {
+		display: flex;
+		flex-direction: column;
+		gap: 5px;
+	}
+
+	.loc-band-inner b {
+		font-size: 14px;
+		font-weight: 700;
+		color: var(--fen-lime-mist);
+	}
+
+	.loc-band-inner span,
+	.loc-band-inner a {
+		font-size: 14px;
+		color: var(--fen-on-dark-2);
+	}
+
+	@media (max-width: 900px) {
+		.loc-split {
+			grid-template-columns: 1fr;
+			height: auto;
+		}
+
+		.loc-split > div {
+			height: 340px;
+		}
+
+		.loc-band-inner {
+			grid-template-columns: 1fr;
+			gap: 24px;
+		}
+
+		.loc-chip {
+			left: 24px;
+			bottom: 24px;
+		}
+	}
+</style>

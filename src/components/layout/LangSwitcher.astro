@@ -1,0 +1,253 @@
+---
+import Flag from '../ui/Flag.astro';
+import { languages, defaultLanguage } from '../../data/languages';
+
+const current = languages.find((l) => l.code === defaultLanguage) ?? languages[0];
+---
+
+<lang-switcher class="lang-item">
+	<button type="button" class="lang-btn" aria-expanded="false" aria-haspopup="listbox">
+		<span class="flag-current"><Flag code={current.code} size={18} /></span>
+		<span class="code-current">{current.label}</span>
+		<svg class="chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+			<path d="M6 9l6 6 6-6" />
+		</svg>
+	</button>
+
+	<ul class="lang-dd" role="listbox">
+		{
+			languages.map((l) => (
+				<li role="option" aria-selected={l.code === current.code ? 'true' : 'false'}>
+					<button type="button" data-code={l.code} data-label={l.label}>
+						<span class="flag">
+							<Flag code={l.code} size={20} />
+						</span>
+						<span class="name">{l.name}</span>
+						<svg class="check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+							<path d="M5 12.5l4.5 4.5L19 7.5" />
+						</svg>
+					</button>
+				</li>
+			))
+		}
+	</ul>
+</lang-switcher>
+
+<style>
+	.lang-item {
+		position: relative;
+	}
+
+	.lang-btn {
+		display: flex;
+		align-items: center;
+		gap: 7px;
+		height: 40px;
+		padding: 0 12px;
+		border: none;
+		border-radius: var(--r-pill);
+		background: transparent;
+		color: #fff;
+		font-family: var(--fen-font);
+		font-size: 13px;
+		font-weight: 600;
+		cursor: pointer;
+		transition: background-color var(--dur) var(--ease-out);
+	}
+
+	.lang-btn:hover,
+	.lang-item.is-open .lang-btn {
+		background: rgba(255, 255, 255, 0.14);
+	}
+
+	.flag-current {
+		display: flex;
+		width: 18px;
+		height: 18px;
+		border-radius: 4px;
+		overflow: hidden;
+		flex-shrink: 0;
+	}
+
+	.flag-current :global(svg) {
+		display: block;
+	}
+
+	.code-current {
+		letter-spacing: 0.02em;
+	}
+
+	.chev {
+		color: rgba(255, 255, 255, 0.7);
+		transition: transform var(--dur) var(--ease-spring);
+	}
+
+	.lang-item.is-open .chev {
+		transform: rotate(180deg);
+	}
+
+	.lang-dd {
+		list-style: none;
+		margin: 0;
+		position: absolute;
+		top: calc(100% + 10px);
+		right: 0;
+		left: auto;
+		width: 190px;
+		background: var(--fen-ivory);
+		border-radius: 16px;
+		padding: 8px;
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+		z-index: 30;
+		box-shadow: var(--sh-pop);
+		opacity: 0;
+		visibility: hidden;
+		transform: translateY(-6px);
+		transition:
+			opacity var(--dur) var(--ease-out),
+			transform var(--dur) var(--ease-out),
+			visibility 0s linear var(--dur);
+	}
+
+	.lang-item.is-open .lang-dd {
+		opacity: 1;
+		visibility: visible;
+		transform: translateY(0);
+		transition-delay: 0s;
+	}
+
+	.lang-dd button {
+		display: flex;
+		align-items: center;
+		width: 100%;
+		gap: 10px;
+		padding: 9px 10px;
+		border: none;
+		border-radius: 11px;
+		background: transparent;
+		font-family: var(--fen-font);
+		text-align: left;
+		text-decoration: none;
+		color: var(--fen-ink);
+		cursor: pointer;
+		transition: background-color var(--dur) var(--ease-out);
+	}
+
+	.lang-dd button:hover {
+		background: #fff;
+	}
+
+	.lang-dd .flag {
+		display: flex;
+		width: 20px;
+		height: 20px;
+		border-radius: 4px;
+		overflow: hidden;
+		flex-shrink: 0;
+	}
+
+	.lang-dd .name {
+		flex: 1;
+		font-size: 13.5px;
+		font-weight: 600;
+	}
+
+	.lang-dd .check {
+		flex-shrink: 0;
+		color: var(--fen-leaf);
+		opacity: 0;
+		transform: scale(0.6);
+		transition:
+			opacity var(--dur) var(--ease-spring),
+			transform var(--dur) var(--ease-spring);
+	}
+
+	.lang-dd li[aria-selected='true'] .check {
+		opacity: 1;
+		transform: scale(1);
+	}
+
+	.lang-dd li[aria-selected='true'] button {
+		background: var(--fen-cream);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.lang-btn,
+		.chev,
+		.lang-dd,
+		.lang-dd button,
+		.lang-dd .check {
+			transition-duration: 1ms !important;
+		}
+	}
+</style>
+
+<script>
+	class LangSwitcher extends HTMLElement {
+		private closeTimer?: ReturnType<typeof setTimeout>;
+
+		connectedCallback() {
+			const btn = this.querySelector<HTMLButtonElement>('.lang-btn');
+			if (!btn) return;
+
+			const setOpen = (isOpen: boolean) => {
+				this.classList.toggle('is-open', isOpen);
+				btn.setAttribute('aria-expanded', String(isOpen));
+			};
+
+			const open = () => {
+				clearTimeout(this.closeTimer);
+				setOpen(true);
+			};
+			const scheduleClose = () => {
+				this.closeTimer = setTimeout(() => setOpen(false), 160);
+			};
+
+			// Mouse (desktop)
+			this.addEventListener('mouseenter', open);
+			this.addEventListener('mouseleave', scheduleClose);
+
+			// Teclado (Tab entra e sai do grupo)
+			this.addEventListener('focusin', open);
+			this.addEventListener('focusout', (e: FocusEvent) => {
+				if (!this.contains(e.relatedTarget as Node)) scheduleClose();
+			});
+
+			// Toque: como não existe hover, o clique alterna abrir/fechar
+			btn.addEventListener('click', (e) => {
+				e.preventDefault();
+				this.classList.contains('is-open') ? setOpen(false) : open();
+			});
+
+			// Esc fecha e devolve o foco ao botão
+			this.addEventListener('keydown', (e: KeyboardEvent) => {
+				if (e.key === 'Escape') {
+					setOpen(false);
+					btn.focus();
+				}
+			});
+
+			// Seleciona o idioma e atualiza o trigger visualmente
+			this.querySelectorAll<HTMLButtonElement>('.lang-dd button').forEach((option) => {
+				option.addEventListener('click', () => {
+					const flagSlot = this.querySelector('.flag-current');
+					const codeSlot = this.querySelector('.code-current');
+					const flagSrc = option.querySelector('.flag')?.innerHTML;
+					if (flagSlot && flagSrc) flagSlot.innerHTML = flagSrc;
+					if (codeSlot) codeSlot.textContent = option.dataset.label ?? '';
+					this.querySelectorAll('li').forEach((li) => li.setAttribute('aria-selected', 'false'));
+					option.closest('li')?.setAttribute('aria-selected', 'true');
+					scheduleClose();
+				});
+			});
+		}
+
+		disconnectedCallback() {
+			clearTimeout(this.closeTimer);
+		}
+	}
+
+	customElements.define('lang-switcher', LangSwitcher);
+</script>

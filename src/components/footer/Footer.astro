@@ -1,0 +1,288 @@
+---
+import { Image } from 'astro:assets';
+import SocialIcon from '../ui/SocialIcon.astro';
+import logoImg from '../../assets/images/logos/fenagra-header.png';
+import { footer as d } from '../../data/footer';
+---
+
+<footer class="site-footer">
+	<div class="wrap top">
+		<div class="brand">
+			<Image
+				class="logo-img"
+				src={logoImg}
+				alt={d.logo.alt}
+				width={logoImg.width}
+				height={logoImg.height}
+				loading="lazy"
+				layout="none"
+			/>
+			<p>{d.tagline}</p>
+			<div class="social-row">
+				{
+					d.social.map((s) => (
+						<a class="social" href={s.href} aria-label={s.name}>
+							<SocialIcon name={s.name} />
+						</a>
+					))
+				}
+			</div>
+		</div>
+
+		{
+			d.groups.map((g) => (
+				<div class="col">
+					<b class="h">{g.title}</b>
+					{g.links.map((l) => (
+						<a href={l.href}>{l.label}</a>
+					))}
+				</div>
+			))
+		}
+	</div>
+
+	<div class="wrap">
+		<div class="contact-row">
+			<div class="contact">
+				<span>
+					<b>{d.contact.label}</b>
+				</span>
+				<a href={d.contact.phone.href}>{d.contact.phone.text}</a>
+				<a href={d.contact.whatsapp.href} target="_blank" rel="noopener">
+					{d.contact.whatsapp.text}
+				</a>
+				<a href={d.contact.email.href}>{d.contact.email.text}</a>
+			</div>
+		</div>
+	</div>
+
+	<div class="legalbar">
+		<div class="wrap legalbar-inner">
+			<p>{d.legal.copyright}</p>
+			<nav class="legal-links">
+				{
+					d.legal.links.map((l) => (
+						<a href={l.href}>{l.label}</a>
+					))
+				}
+			</nav>
+		</div>
+	</div>
+</footer>
+
+<style>
+	.wrap {
+		max-width: 1200px;
+		margin: 0 auto;
+		padding: 0 var(--gutter);
+	}
+
+	a {
+		color: inherit;
+		text-decoration: none;
+	}
+
+	.site-footer {
+		background: var(--fen-cream);
+	}
+
+	.top {
+		padding-top: 72px;
+		padding-bottom: 44px;
+		display: grid;
+		grid-template-columns: 1.3fr repeat(4, 1fr);
+		gap: 32px;
+	}
+
+	.brand {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		margin-right: 48px;
+	}
+
+	.logo-img {
+		height: 40px;
+		width: auto;
+		display: block;
+		align-self: flex-start;
+	}
+
+	.brand p {
+		margin: 0;
+		font-size: 13.5px;
+		line-height: 1.6;
+		color: var(--fen-ink-3);
+		max-width: 260px;
+	}
+
+	.social-row {
+		display: flex;
+		gap: 10px;
+		margin-top: 4px;
+	}
+
+	.social {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 38px;
+		height: 38px;
+		border-radius: var(--r-pill);
+		flex-shrink: 0;
+		background: #fff;
+		border: 1px solid var(--fen-line);
+		color: var(--fen-green-900);
+		transition:
+			transform 220ms var(--ease-spring),
+			background-color 220ms var(--ease-out),
+			color 220ms var(--ease-out),
+			border-color 220ms var(--ease-out);
+	}
+
+	.social:hover {
+		transform: translateY(-3px);
+		background: var(--fen-green-900);
+		color: #fff;
+		border-color: var(--fen-green-900);
+	}
+
+	.social :global(svg) {
+		width: 17px;
+		height: 17px;
+	}
+
+	.col b.h {
+		display: block;
+		font-size: 13px;
+		font-weight: 700;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		color: var(--fen-green-900);
+		margin-bottom: 16px;
+	}
+
+	.col a {
+		display: block;
+		font-size: 14px;
+		color: var(--fen-ink-3);
+		padding: 6px 0;
+		transition: color 220ms var(--ease-out);
+	}
+
+	.col a:hover {
+		color: var(--fen-green-900);
+	}
+
+	.contact-row {
+		border-top: 1px solid var(--fen-line);
+		padding: 26px 0;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 16px;
+	}
+
+	.contact {
+		display: flex;
+		gap: 28px;
+		flex-wrap: wrap;
+		font-size: 13px;
+		color: var(--fen-ink-3);
+	}
+
+	.contact b {
+		color: var(--fen-green-900);
+		font-weight: 600;
+	}
+
+	.contact a {
+		color: var(--fen-ink-3);
+		transition: color 220ms var(--ease-out);
+	}
+
+	.contact a:hover {
+		color: var(--fen-green-900);
+	}
+
+	.legalbar {
+		background: var(--fen-green-950);
+		padding: 18px 0;
+	}
+
+	.legalbar-inner {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+		align-items: center;
+		text-align: center;
+	}
+
+	.legalbar p {
+		margin: 0;
+		font-size: 12px;
+		line-height: 1.6;
+		color: var(--fen-on-dark-3);
+	}
+
+	.legal-links {
+		display: flex;
+		gap: 16px;
+		flex-wrap: wrap;
+		justify-content: center;
+	}
+
+	.legal-links a {
+		font-size: 12px;
+		color: var(--fen-on-dark-2);
+		transition: color 220ms var(--ease-out);
+	}
+
+	.legal-links a:hover {
+		color: #fff;
+	}
+
+	@media (max-width: 980px) {
+		.top {
+			grid-template-columns: repeat(2, 1fr);
+		}
+
+		.brand {
+			grid-column: span 2;
+			margin-right: 0;
+		}
+	}
+
+	@media (max-width: 560px) {
+		.top {
+			grid-template-columns: 1fr;
+			gap: 44px;
+		}
+
+		.brand {
+			grid-column: span 1;
+		}
+
+		.col b.h {
+			font-size: 13.5px;
+			margin-bottom: 18px;
+		}
+
+		.col a {
+			font-size: 15.5px;
+			padding: 9px 0;
+		}
+
+		.contact-row {
+			flex-direction: column;
+			align-items: flex-start;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.social {
+			transition: none !important;
+		}
+	}
+</style>

@@ -1,0 +1,63 @@
+---
+export type IconName =
+	| 'arrow'
+	| 'arrow-diagonal'
+	| 'chevron'
+	| 'menu'
+	| 'close'
+	| 'users'
+	| 'check'
+	| 'play'
+	| 'external'
+	| 'credential'
+	| 'people'
+	| 'mic'
+	| 'question';
+
+interface Props {
+	name: IconName;
+	size?: number;
+	strokeWidth?: number;
+	class?: string;
+}
+
+const { name, size = 20, strokeWidth = 2, class: className } = Astro.props;
+
+const paths: Record<IconName, string> = {
+	chevron: '<path d="M6 9l6 6 6-6"/>',
+	arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
+	'arrow-diagonal': '<path d="M7 17L17 7M9 7h8v8"/>',
+	menu: '<path d="M4 8h16M4 16h16"/>',
+	close: '<path d="M6 6l12 12M18 6L6 18"/>',
+	users: '<path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+	check: '<path d="M5 13l4 4L19 7"/>',
+	play: '<path d="M8 5v14l11-7z"/>',
+	external:
+		'<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/>',
+	credential:
+		'<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10.5" r="1.8"/><path d="M6.5 15.5c.6-1.6 1.9-2.4 2.5-2.4s1.9.8 2.5 2.4M14 9.5h4M14 13h4"/>',
+	people:
+		'<circle cx="9" cy="8" r="3"/><path d="M3.5 19c.7-3.2 2.9-5 5.5-5s4.8 1.8 5.5 5"/><circle cx="17" cy="9" r="2.4"/><path d="M15.5 13.2c1.9.3 3.3 1.8 3.8 3.8"/>',
+	mic: '<rect x="9.5" y="3.5" width="5" height="9" rx="2.5"/><path d="M6 11a6 6 0 0 0 12 0"/><path d="M12 17v3.5M9 20.5h6"/>',
+	question:
+		'<path d="M6 18l-2.2 2.2A1 1 0 0 1 2 19.5V7a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6z"/><path d="M12 14v-.3c0-.6.4-1 .9-1.3.7-.4 1.1-1 1.1-1.9 0-1.1-.9-2-2-2s-2 .9-2 2"/><circle cx="12" cy="16.4" r=".1" fill="currentColor"/>',
+};
+
+/** Ícones desenhados como forma preenchida (sem traço), em vez de linha. */
+const FILLED_ICONS = new Set<IconName>(['play']);
+const isFilled = FILLED_ICONS.has(name);
+---
+
+<svg
+	class={className}
+	width={size}
+	height={size}
+	viewBox="0 0 24 24"
+	fill={isFilled ? 'currentColor' : 'none'}
+	stroke={isFilled ? 'none' : 'currentColor'}
+	stroke-width={isFilled ? undefined : strokeWidth}
+	stroke-linecap={isFilled ? undefined : 'round'}
+	stroke-linejoin={isFilled ? undefined : 'round'}
+	aria-hidden="true"
+	set:html={paths[name]}
+/>

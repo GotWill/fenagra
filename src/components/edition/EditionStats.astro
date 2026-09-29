@@ -1,0 +1,639 @@
+---
+import { Picture } from 'astro:assets';
+import { edition as d } from '../../data/edition';
+import visitantesPhoto from '../../assets/images/visitantes.jpg';
+
+const cards = d.cards;
+---
+
+<section class="edition" aria-labelledby="edition-title">
+	<div class="decoration" aria-hidden="true"></div>
+
+	<div class="wrap head">
+		<h2 id="edition-title">{d.title}</h2>
+		<a class="link" href={d.cta.href}>{d.cta.label}</a>
+	</div>
+
+	<div class="wrap">
+		<div class="bento" id="bento">
+			<article class="cell cell-photo" style="--i:0">
+				<Picture
+					src={visitantesPhoto}
+					formats={['avif', 'webp']}
+					widths={[480, 720, 960, 1280]}
+					sizes="(max-width: 980px) 100vw, 50vw"
+					loading="lazy"
+					decoding="async"
+					alt={d.photo.alt}
+					layout="none"
+					class="photo-img"
+				/>
+				<div class="photo-overlay" aria-hidden="true"></div>
+				<span class="tag">{d.photo.tag}</span>
+				<span class="circles" aria-hidden="true"><i></i><i></i></span>
+				<div class="stat">
+					<span class="num" data-count data-to={d.photo.countTo} data-prefix={d.photo.prefix} data-suffix={d.photo.suffix}
+						>0</span
+					>
+					<span class="cap">{d.photo.caption}</span>
+				</div>
+			</article>
+
+			{
+				cards.map((c, i) => (
+					<article class:list={['cell', `cell-${c.tone}`]} style={`--i:${i + 1}`}>
+						{c.icon === 'ticket' && (
+							<span class="icon-wrap" aria-hidden="true">
+								<svg
+									class="ic-ticket"
+									width="28"
+									height="28"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="1.8"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+								>
+									<path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4z" />
+									<path d="M9 7v10" stroke-dasharray="2 3" />
+								</svg>
+							</span>
+						)}
+						{c.icon === 'clock' && (
+							<span class="icon-wrap" aria-hidden="true">
+								<svg
+									width="28"
+									height="28"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="1.8"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+								>
+									<circle cx="12" cy="12" r="9" />
+									<path class="ic-hand" d="M12 7v5l3 2" />
+								</svg>
+							</span>
+						)}
+
+						{c.label && <span class="label">{c.label}</span>}
+						{c.title && <span class="title">{c.title}</span>}
+
+						{c.countTo > 0 ? (
+							<span class="num sm" data-count data-to={c.countTo} data-prefix={c.prefix ?? ''} data-suffix={c.suffix ?? ''}>
+								0
+							</span>
+						) : null}
+
+						<span class="cap">{c.caption}</span>
+					</article>
+				))
+			}
+		</div>
+	</div>
+</section>
+
+<style>
+	.edition {
+		position: relative;
+		overflow: hidden;
+		background: var(--fen-cream);
+		padding: 104px 0;
+	}
+
+	.decoration {
+		position: absolute;
+		right: -200px;
+		top: -220px;
+		width: 480px;
+		height: 480px;
+		border-radius: 50%;
+		border: 1.5px solid var(--fen-line);
+		pointer-events: none;
+	}
+
+	.wrap {
+		position: relative;
+		padding: 0 var(--gutter);
+	}
+
+	.head {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-end;
+		gap: 24px;
+		margin-bottom: 40px;
+		flex-wrap: wrap;
+	}
+
+	.head h2 {
+		margin: 0;
+		max-width: 640px;
+		font-weight: 700;
+		font-size: clamp(28px, 3.2vw, 40px);
+		line-height: 1.2;
+		letter-spacing: -0.01em;
+		color: var(--fen-green-900);
+	}
+
+	.link {
+		font-size: 14px;
+		font-weight: 600;
+		color: var(--fen-green-900);
+		text-decoration: none;
+		padding-bottom: 2px;
+		background: linear-gradient(currentColor, currentColor) 0 100% / 100% 1.5px no-repeat;
+		flex-shrink: 0;
+	}
+
+	.link:hover {
+		animation: link-grow var(--dur) var(--ease-out) forwards;
+	}
+
+	@keyframes link-grow {
+		0% {
+			background-position: 100% 100%;
+			background-size: 100% 1.5px;
+		}
+		49% {
+			background-position: 100% 100%;
+			background-size: 0 1.5px;
+		}
+		50% {
+			background-position: 0 100%;
+		}
+		100% {
+			background-position: 0 100%;
+			background-size: 100% 1.5px;
+		}
+	}
+
+	.bento {
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		grid-template-rows: 250px 250px;
+		gap: 20px;
+	}
+
+	/* ===== base do card + timeline de entrada ===== */
+	.cell {
+		position: relative;
+		border-radius: var(--r-24);
+		padding: 28px;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		overflow: hidden;
+		opacity: 0;
+		transform: translateY(28px);
+		transition:
+			opacity 0.6s var(--ease-out),
+			transform 0.6s var(--ease-out),
+			box-shadow 0.25s var(--ease-out),
+			translate 0.25s var(--ease-out);
+		transition-delay: calc(var(--i) * 110ms);
+	}
+
+	.bento.is-visible .cell {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
+	.cell:hover {
+		translate: 0 -6px;
+	}
+
+	/* ===== card grande (foto) ===== */
+	.cell-photo {
+		grid-column: 1 / 3;
+		grid-row: 1 / 3;
+		background: var(--fen-green-800);
+		color: #fff;
+		padding: 32px;
+	}
+
+	.cell-photo:hover {
+		box-shadow: 0 24px 48px -16px rgba(15, 30, 14, 0.55);
+	}
+
+	.cell-photo :global(.photo-img) {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	.photo-overlay {
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(180deg, rgba(31, 59, 28, 0.15) 0%, rgba(31, 59, 28, 0.8) 100%);
+	}
+
+	.tag {
+		position: absolute;
+		right: 24px;
+		top: 24px;
+		padding: 6px 10px;
+		background: var(--fen-green-950);
+		border-radius: var(--r-6);
+		font-size: 12px;
+		color: var(--fen-on-dark);
+	}
+
+	.circles {
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+	}
+
+	.circles i {
+		position: absolute;
+		right: -90px;
+		top: -90px;
+		width: 340px;
+		height: 340px;
+		border-radius: var(--r-pill);
+		background: var(--fen-green-750);
+		mix-blend-mode: multiply;
+		opacity: 0.55;
+		transition: transform 0.5s var(--ease-out);
+	}
+
+	.circles i:nth-child(2) {
+		right: -40px;
+		top: -40px;
+		width: 220px;
+		height: 220px;
+		background: rgba(255, 255, 255, 0.14);
+		mix-blend-mode: normal;
+	}
+
+	.cell-photo:hover .circles i {
+		transform: translate(calc(var(--mx, 0) * 1px), calc(var(--my, 0) * 1px));
+	}
+
+	.stat {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+	}
+
+	.num {
+		font-weight: 700;
+		font-size: 52px;
+		line-height: 1;
+		letter-spacing: -0.02em;
+		color: #fff;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.cap {
+		font-size: 16px;
+		color: var(--fen-on-dark);
+	}
+
+	/* ===== cards pequenos (comuns) ===== */
+	.cell-accent,
+	.cell-butter,
+	.cell-dark,
+	.cell-outline {
+		gap: 4px;
+	}
+
+	.num.sm {
+		font-weight: 700;
+		font-size: 44px;
+		line-height: 1;
+		letter-spacing: -0.02em;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.label {
+		font-size: 14px;
+		font-weight: 600;
+	}
+
+	.title {
+		font-weight: 700;
+		font-size: 24px;
+		line-height: 1.2;
+	}
+
+	/* acento (verde-limão) */
+	.cell-accent {
+		grid-column: 4 / 5;
+		grid-row: 1 / 2;
+		background: var(--fen-accent);
+		color: var(--fen-green-950);
+		isolation: isolate;
+	}
+
+	.cell-accent .num {
+		color: var(--fen-green-950);
+	}
+
+	.cell-accent .label,
+	.cell-accent .cap {
+		color: var(--fen-green-900);
+	}
+
+	/* barra de crescimento embutida no rótulo */
+	.cell-accent .label,
+	.cell-butter .label {
+		position: relative;
+		padding-bottom: 10px;
+	}
+
+	.cell-accent .label::after,
+	.cell-butter .label::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		bottom: 0;
+		height: 3px;
+		width: 0;
+		border-radius: var(--r-pill);
+		background: currentColor;
+		opacity: 0.35;
+		transition: width 1s var(--ease-out) 0.3s;
+	}
+
+	.bento.is-visible .cell-accent .label::after {
+		width: 30%;
+	}
+
+	.bento.is-visible .cell-butter .label::after {
+		width: 20%;
+	}
+
+	.cell-accent::after,
+	.cell-butter::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.5) 50%, transparent 70%);
+		transform: translateX(-130%);
+		transition: transform 0.7s var(--ease-out);
+	}
+
+	.cell-accent:hover::after,
+	.cell-butter:hover::after {
+		transform: translateX(130%);
+	}
+
+	.cell-accent:hover,
+	.cell-butter:hover {
+		box-shadow: 0 16px 32px -14px rgba(120, 140, 20, 0.45);
+	}
+
+	.cell-accent:hover .num,
+	.cell-butter:hover .num {
+		transform: scale(1.04);
+	}
+
+	.num {
+		transition: transform 0.25s var(--ease-spring);
+	}
+
+	/* visitação (manteiga) */
+	.cell-butter {
+		background: var(--fen-butter);
+		color: var(--fen-green-950);
+	}
+
+	.cell-butter .num {
+		color: var(--fen-green-950);
+	}
+
+	.cell-butter .label,
+	.cell-butter .cap {
+		color: var(--fen-green-900);
+	}
+
+	/* entrada gratuita (verde escuro + ticket) */
+	.cell-dark {
+		grid-column: 3 / 4;
+		grid-row: 1 / 3;
+		background: var(--fen-green-900);
+		color: #fff;
+	}
+
+	.cell-dark .cap {
+		color: var(--fen-on-dark-2);
+		font-size: 14px;
+		line-height: 1.45;
+	}
+
+	.cell-dark:hover {
+		box-shadow: 0 16px 32px -14px rgba(15, 30, 14, 0.6);
+	}
+
+	.icon-wrap {
+		color: var(--fen-lime-mist);
+	}
+
+	.ic-ticket {
+		transition: transform 0.45s var(--ease-spring);
+	}
+
+	.cell-dark:hover .ic-ticket {
+		transform: translateY(-4px) rotate(-8deg);
+	}
+
+	/* marcas expositoras (contorno + relógio) */
+	.cell-outline {
+		grid-column: 4 / 5;
+		grid-row: 2 / 3;
+		background: #fff;
+		border: 1.5px solid var(--fen-line);
+		color: var(--fen-ink);
+		transition:
+			border-color 0.25s ease,
+			opacity 0.6s var(--ease-out),
+			transform 0.6s var(--ease-out),
+			translate 0.25s ease;
+	}
+
+	.cell-outline .icon-wrap {
+		color: var(--fen-green-chip);
+	}
+
+	.cell-outline .num {
+		color: var(--fen-green-900);
+	}
+
+	.cell-outline .cap {
+		color: var(--fen-ink-3);
+	}
+
+	.cell-outline:hover {
+		border-color: var(--fen-accent);
+		box-shadow: 0 16px 32px -18px rgba(15, 30, 14, 0.25);
+	}
+
+	.ic-hand {
+		transform-origin: 12px 12px;
+		transition: transform 0.6s var(--ease-spring);
+	}
+
+	.cell-outline:hover .ic-hand {
+		transform: rotate(115deg);
+	}
+
+	@media (max-width: 980px) {
+		.bento {
+			grid-template-columns: 1fr;
+			grid-template-rows: auto;
+		}
+
+		.cell-photo,
+		.cell-dark,
+		.cell-accent,
+		.cell-outline {
+			grid-column: auto;
+			grid-row: auto;
+		}
+
+		.cell {
+			min-height: 200px;
+		}
+
+		.cell-photo {
+			min-height: 340px;
+		}
+	}
+
+	@media (max-width: 640px) {
+		.edition {
+			padding: 40px 0 72px;
+		}
+	}
+
+	@media (max-width: 560px) {
+		.head {
+			align-items: flex-start;
+		}
+
+		.num {
+			font-size: 40px;
+		}
+
+		.num.sm {
+			font-size: 34px;
+		}
+
+		.cell {
+			padding: 22px;
+			border-radius: var(--r-20);
+		}
+	}
+
+	@media (hover: none) {
+		.cell:hover {
+			translate: none;
+		}
+
+		.cell-photo:hover .circles i {
+			transform: none;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.cell {
+			transition-duration: 1ms !important;
+			transition-delay: 0s !important;
+			opacity: 1;
+			transform: none;
+		}
+
+		.cell-accent::after,
+		.cell-butter::after,
+		.circles i,
+		.ic-ticket,
+		.ic-hand,
+		.num {
+			transition: none !important;
+		}
+	}
+</style>
+
+<script>
+	class CountUp {
+		el: HTMLElement;
+		to: number;
+		prefix: string;
+		suffix: string;
+		delay: number;
+
+		constructor(el: HTMLElement, delay: number) {
+			this.el = el;
+			this.to = Number(el.dataset.to || 0);
+			this.prefix = el.dataset.prefix || '';
+			this.suffix = el.dataset.suffix || '';
+			this.delay = delay;
+		}
+
+		run(reduced: boolean) {
+			if (reduced || this.to === 0) {
+				this.el.textContent = `${this.prefix}${this.to.toLocaleString('pt-BR')}${this.suffix}`;
+				return;
+			}
+			setTimeout(() => {
+				const dur = 1100;
+				const start = performance.now();
+				const tick = (now: number) => {
+					const p = Math.min(1, (now - start) / dur);
+					const eased = 1 - Math.pow(1 - p, 3);
+					const val = Math.round(this.to * eased);
+					this.el.textContent = `${this.prefix}${val.toLocaleString('pt-BR')}${this.suffix}`;
+					if (p < 1) requestAnimationFrame(tick);
+				};
+				requestAnimationFrame(tick);
+			}, this.delay);
+		}
+	}
+
+	const bento = document.getElementById('bento');
+	if (bento) {
+		const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+		const cells = Array.from(bento.querySelectorAll<HTMLElement>('.cell'));
+		const counters = cells.flatMap((cell, i) =>
+			Array.from(cell.querySelectorAll<HTMLElement>('[data-count]')).map((el) => new CountUp(el, i * 110 + 250)),
+		);
+
+		const io = new IntersectionObserver(
+			(entries) => {
+				entries.forEach((entry) => {
+					if (entry.isIntersecting) {
+						bento.classList.add('is-visible');
+						counters.forEach((c) => c.run(reduced));
+						io.disconnect();
+					}
+				});
+			},
+			{ threshold: 0.3 },
+		);
+		io.observe(bento);
+
+		// parallax sutil dos círculos no card grande, desligado em touch/reduced motion
+		const photo = bento.querySelector<HTMLElement>('.cell-photo');
+		if (photo && !reduced && window.matchMedia('(hover: hover)').matches) {
+			photo.addEventListener('pointermove', (e) => {
+				const r = photo.getBoundingClientRect();
+				const mx = ((e.clientX - r.left) / r.width - 0.5) * 16;
+				const my = ((e.clientY - r.top) / r.height - 0.5) * 16;
+				photo.style.setProperty('--mx', mx.toFixed(1));
+				photo.style.setProperty('--my', my.toFixed(1));
+			});
+			photo.addEventListener('pointerleave', () => {
+				photo.style.setProperty('--mx', '0');
+				photo.style.setProperty('--my', '0');
+			});
+		}
+	}
+</script>

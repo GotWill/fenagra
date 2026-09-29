@@ -1,0 +1,211 @@
+---
+import HeroBackground from './HeroBackground.astro';
+import CountdownChip from './CountdownChip.astro';
+import SegmentsMarquee from './SegmentsMarquee.astro';
+import Chip from '../ui/Chip.astro';
+import Icon from '../ui/Icon.astro';
+import { event } from '../../data/event';
+
+const headline = ['Toda a cadeia', 'Feed & Food', 'em três dias'];
+---
+
+<section class="hero" aria-labelledby="hero-title">
+		<HeroBackground />
+
+		<div class="content">
+			<div class="inner">
+				<div class="col-text">
+					<div class="chips">
+						<CountdownChip />
+						<Chip variant="glass">{event.dateLabel} · {event.venue}</Chip>
+					</div>
+
+					<h1 id="hero-title" class="h1">
+						{
+							headline.map((line) => (
+								<span class="h1-line">
+									<span class="h1-line-inner">{line}</span>
+								</span>
+							))
+						}
+					</h1>
+
+					<p class="lead">
+						Nutrição animal, pet food, óleos e gorduras, biodiesel e reciclagem animal no principal
+						encontro da agroindústria da América Latina.
+					</p>
+
+					<div class="proof">
+						<span class="proof-icon">
+							<Icon name="users" size={18} />
+						</span>
+						<p><strong>{event.visitorsLabel}</strong> {event.visitorsCaption}</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<SegmentsMarquee />
+	</section>
+
+<style>
+	.hero {
+		position: relative;
+		overflow: hidden;
+		display: flex;
+		flex-direction: column;
+		min-height: max(760px, 100svh);
+		background: var(--fen-green-850);
+		color: #fff;
+	}
+
+	.content {
+		position: relative;
+		z-index: 1;
+		flex: 1;
+		display: flex;
+		align-items: flex-end;
+	}
+
+	.inner {
+		width: 100%;
+		padding: 180px var(--gutter) 56px;
+		display: flex;
+		align-items: flex-end;
+	}
+
+	.col-text {
+		flex: 1;
+		max-width: 720px;
+		display: flex;
+		flex-direction: column;
+		gap: 24px;
+	}
+
+	.chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 10px;
+		animation: hero-fade-in 800ms var(--ease-out) both;
+		animation-delay: 80ms;
+	}
+
+	.h1 {
+		margin: 0;
+		font-weight: 700;
+		font-size: clamp(40px, 5.6vw, 80px);
+		line-height: 1.02;
+		letter-spacing: -0.025em;
+		color: #fff;
+	}
+
+	.h1-line {
+		display: block;
+		overflow: hidden;
+	}
+
+	.h1-line-inner {
+		display: block;
+		transform: translateY(105%);
+		animation: h1-line-up 900ms var(--ease-out) forwards;
+	}
+
+	.h1-line:nth-child(1) .h1-line-inner {
+		animation-delay: 0ms;
+	}
+
+	.h1-line:nth-child(2) .h1-line-inner {
+		animation-delay: 120ms;
+	}
+
+	.h1-line:nth-child(3) .h1-line-inner {
+		animation-delay: 240ms;
+	}
+
+	@keyframes h1-line-up {
+		to {
+			transform: translateY(0);
+		}
+	}
+
+	.lead {
+		margin: 0;
+		max-width: 560px;
+		font-size: 18px;
+		line-height: 1.55;
+		color: var(--fen-on-dark);
+		animation: hero-fade-in 800ms var(--ease-out) both;
+		animation-delay: 240ms;
+	}
+
+	.proof {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		animation: hero-fade-in 800ms var(--ease-out) both;
+		animation-delay: 420ms;
+	}
+
+	.proof-icon {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 36px;
+		height: 36px;
+		flex-shrink: 0;
+		border-radius: 50%;
+		background: var(--fen-accent);
+		color: var(--fen-green-950);
+	}
+
+	.proof p {
+		margin: 0;
+		font-size: 14px;
+		color: var(--fen-on-dark);
+	}
+
+	.proof strong {
+		color: #fff;
+		font-weight: 700;
+	}
+
+	@keyframes hero-fade-in {
+		from {
+			opacity: 0;
+			transform: translateY(16px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	@media (max-width: 1024px) {
+		.inner {
+			flex-direction: column;
+			align-items: stretch;
+			padding-top: 140px;
+		}
+	}
+
+	@media (max-width: 640px) {
+		.inner {
+			padding: 120px 20px 40px;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.h1-line-inner {
+			animation: none;
+			transform: translateY(0);
+		}
+
+		.chips,
+		.lead,
+		.proof {
+			animation: none;
+			opacity: 1;
+			transform: none;
+		}
+	}
+</style>

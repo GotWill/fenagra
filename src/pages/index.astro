@@ -1,11 +1,35 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/layout/Header.astro';
+import MobileMenu from '../components/layout/MobileMenu.astro';
+import Hero from '../components/hero/Hero.astro';
+import AboutSection from '../components/about/AboutSection.astro';
+import EditionStats from '../components/edition/EditionStats.astro';
+import CtaBand from '../components/cta/CtaBand.astro';
+import QuickLinksGrid from '../components/quicklinks/QuickLinksGrid.astro';
+import FaqSection from '../components/faq/FaqSection.astro';
+import LocationSection from '../components/location/LocationSection.astro';
+import PartnersSection from '../components/partners/PartnersSection.astro';
+import NewsletterSection from '../components/newsletter/NewsletterSection.astro';
+import Footer from '../components/footer/Footer.astro';
 ---
 
-<Layout>
-	<Welcome />
-</Layout>
+<BaseLayout
+	title="FENAGRA 2027 — Toda a cadeia Feed & Food em três dias"
+	description="Nutrição animal, pet food, óleos e gorduras, biodiesel e reciclagem animal no principal encontro da agroindústria da América Latina. 11 a 13 de maio de 2027, Distrito Anhembi, SP."
+>
+	<Header />
+	<MobileMenu />
+	<main id="conteudo">
+		<Hero />
+		<AboutSection />
+		<EditionStats />
+		<LocationSection />
+		<CtaBand />
+		<QuickLinksGrid />
+		<FaqSection />
+		<PartnersSection />
+		<NewsletterSection />
+	</main>
+	<Footer />
+</BaseLayout>

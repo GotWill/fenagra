@@ -1,0 +1,447 @@
+---
+import { Image } from 'astro:assets';
+import bgImage from '../../assets/images/maquina.jpg';
+import { newsletter as d } from '../../data/newsletter';
+---
+
+<section class="sec-nl" aria-labelledby="newsletter-title">
+	<div class="nl-bg" aria-hidden="true">
+		<Image src={bgImage} alt="" layout="full-width" loading="lazy" class="nl-bg-img" />
+		<div class="nl-bg-tint"></div>
+	</div>
+
+	<div class="wrap nl-wrap">
+		<div class="nl-card">
+			<h2 id="newsletter-title">
+				{d.title} <span>{d.highlight}</span>
+			</h2>
+			<p>{d.body}</p>
+
+			<form class="nl-form">
+				<label for="nl-email" class="sr-only">E-mail</label>
+				<input
+					id="nl-email"
+					name="email"
+					type="email"
+					placeholder={d.emailPlaceholder}
+					autocomplete="email"
+				/>
+				<button type="submit" class="btn btn-accent">
+					{d.cta}
+					<svg
+						width="16"
+						height="16"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						aria-hidden="true"
+					>
+						<path d="M5 12h14M13 6l6 6-6 6" />
+					</svg>
+				</button>
+			</form>
+
+			<div class="consent">
+				<span class="consent-head">
+					<svg
+						width="14"
+						height="14"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						aria-hidden="true"
+					>
+						<path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z" />
+					</svg>
+					{d.privacy.label}
+				</span>
+				<a class="priv-link" href={d.privacy.linkHref} target="_blank" rel="noopener">
+					{d.privacy.linkText}
+				</a>
+				<p class="consent-desc">{d.privacy.intro}</p>
+
+				{
+					d.consents.map((c, i) => (
+						<label class="chk">
+							<input type="checkbox" name={`consent-${i}`} />
+							<span class="box">
+								<svg
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="3"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+								>
+									<path d="M5 12.5l4.5 4.5L19 7.5" />
+								</svg>
+							</span>
+							<span class="txt">
+								{c.text} <b>({c.purpose})</b>
+							</span>
+						</label>
+					))
+				}
+			</div>
+		</div>
+	</div>
+</section>
+
+<style>
+	.sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip: rect(0 0 0 0);
+		white-space: nowrap;
+	}
+
+	.wrap {
+		max-width: 1200px;
+		margin: 0 auto;
+		padding: 0 var(--gutter);
+	}
+
+	.eyebrow {
+		display: block;
+		font-size: 13px;
+		font-weight: 600;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		color: var(--fen-lime-mist);
+	}
+
+	/* ---------- fundo: foto da feira + tint ---------- */
+	.sec-nl {
+		position: relative;
+		overflow: hidden;
+		background: var(--fen-green-950);
+	}
+
+	.nl-bg {
+		position: absolute;
+		inset: 0;
+		z-index: 0;
+	}
+
+	.nl-bg :global(img) {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		object-position: center 40%;
+	}
+
+	.nl-bg-tint {
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(
+			100deg,
+			rgba(15, 42, 29, 0.55) 0%,
+			rgba(15, 42, 29, 0.62) 45%,
+			rgba(15, 42, 29, 0.86) 100%
+		);
+	}
+
+	/* ---------- layout: imagem esquerda, card flutuante à direita ---------- */
+	.nl-wrap {
+		position: relative;
+		z-index: 1;
+		display: flex;
+		justify-content: flex-end;
+		padding-top: 96px;
+		padding-bottom: 96px;
+	}
+
+	/* ---------- cartão de vidro ---------- */
+	.nl-card {
+		position: relative;
+		width: 100%;
+		max-width: 560px;
+		background: rgba(9, 26, 17, 0.42);
+		backdrop-filter: blur(18px) saturate(150%);
+		-webkit-backdrop-filter: blur(18px) saturate(150%);
+		border: 1px solid rgba(255, 255, 255, 0.16);
+		border-radius: 28px;
+		padding: 44px;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 14px;
+		box-shadow: 0 30px 60px rgba(0, 0, 0, 0.35);
+	}
+
+	.nl-card h2 {
+		margin: 0;
+		font-weight: 700;
+		font-size: clamp(26px, 3vw, 34px);
+		line-height: 1.2;
+		color: #fff;
+	}
+
+	.nl-card h2 span {
+		color: var(--fen-accent);
+	}
+
+	.nl-card p {
+		margin: 0;
+		font-size: 14.5px;
+		line-height: 1.6;
+		color: var(--fen-on-dark-2);
+	}
+
+	/* ---------- formulário ---------- */
+	.nl-form {
+		display: flex;
+		gap: 10px;
+		width: 100%;
+		margin-top: 6px;
+	}
+
+	.nl-form input {
+		height: 54px;
+		flex: 1;
+		min-width: 0;
+		padding: 0 20px;
+		border-radius: var(--r-pill);
+		border: 1.5px solid var(--fen-green-edge);
+		background: rgba(255, 255, 255, 0.08);
+		color: #fff;
+		font-size: 14.5px;
+		font-family: var(--fen-font);
+		transition:
+			border-color 220ms var(--ease-out),
+			background-color 220ms var(--ease-out);
+	}
+
+	.nl-form input::placeholder {
+		color: var(--fen-on-dark-3);
+	}
+
+	.nl-form input:focus {
+		outline: none;
+		border-color: var(--fen-accent);
+		background: rgba(255, 255, 255, 0.12);
+	}
+
+	/* ---------- botão ---------- */
+	.btn {
+		position: relative;
+		overflow: hidden;
+		isolation: isolate;
+		flex-shrink: 0;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 10px;
+		height: 54px;
+		padding: 0 28px;
+		border-radius: var(--r-pill);
+		border: none;
+		font-family: var(--fen-font);
+		font-size: 15px;
+		font-weight: 600;
+		cursor: pointer;
+		white-space: nowrap;
+		transition:
+			transform 220ms var(--ease-out),
+			box-shadow 220ms var(--ease-out);
+	}
+
+	.btn:hover {
+		transform: translateY(-2px);
+	}
+
+	.btn:active {
+		transform: translateY(0) scale(0.97);
+	}
+
+	.btn-accent {
+		background: var(--fen-accent);
+		color: var(--fen-green-950);
+	}
+
+	.btn-accent::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.5) 50%, transparent 70%);
+		transform: translateX(-130%);
+		transition: transform 520ms var(--ease-out);
+	}
+
+	.btn-accent:hover::after {
+		transform: translateX(130%);
+	}
+
+	.btn-accent:hover {
+		box-shadow: 0 14px 28px -12px rgba(120, 140, 20, 0.6);
+	}
+
+	/* ---------- painel de consentimento (LGPD), sempre visível ---------- */
+	.consent {
+		width: 100%;
+		margin-top: 4px;
+		padding-top: 18px;
+		border-top: 1px solid rgba(255, 255, 255, 0.16);
+		text-align: left;
+	}
+
+	.consent-head {
+		display: flex;
+		align-items: center;
+		gap: 7px;
+		margin-bottom: 8px;
+		font-size: 12.5px;
+		font-weight: 600;
+		color: var(--fen-on-dark-2);
+	}
+
+	.consent-head svg {
+		color: var(--fen-leaf);
+		flex-shrink: 0;
+	}
+
+	.priv-link {
+		font-size: 12px;
+		font-weight: 600;
+		text-decoration: underline;
+		text-underline-offset: 2px;
+		color: var(--fen-lime-mist);
+		display: inline-block;
+		overflow-wrap: anywhere;
+	}
+
+	.consent-desc {
+		margin: 8px 0 2px;
+		font-size: 12px;
+		line-height: 1.5;
+		color: var(--fen-on-dark-3);
+	}
+
+	/* ---------- checkbox customizado ---------- */
+	.chk {
+		display: flex;
+		align-items: flex-start;
+		gap: 10px;
+		cursor: pointer;
+		padding: 7px 0;
+	}
+
+	.chk input {
+		position: absolute;
+		opacity: 0;
+		width: 1px;
+		height: 1px;
+	}
+
+	.chk .box {
+		flex-shrink: 0;
+		width: 18px;
+		height: 18px;
+		margin-top: 1px;
+		border-radius: 5px;
+		border: 1.5px solid var(--fen-green-edge);
+		background: transparent;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transition:
+			background-color 220ms var(--ease-out),
+			border-color 220ms var(--ease-out);
+	}
+
+	.chk .box svg {
+		width: 11px;
+		height: 11px;
+		color: var(--fen-green-950);
+		opacity: 0;
+		transform: scale(0.5);
+		transition:
+			opacity 220ms var(--ease-spring),
+			transform 220ms var(--ease-spring);
+	}
+
+	.chk input:checked + .box {
+		background: var(--fen-accent);
+		border-color: var(--fen-accent);
+	}
+
+	.chk input:checked + .box svg {
+		opacity: 1;
+		transform: scale(1);
+	}
+
+	.chk input:focus-visible + .box {
+		outline: 3px solid var(--fen-accent);
+		outline-offset: 2px;
+	}
+
+	.chk .txt {
+		font-size: 12px;
+		line-height: 1.5;
+		color: var(--fen-on-dark-2);
+		overflow-wrap: anywhere;
+	}
+
+	.chk .txt b {
+		font-weight: 600;
+	}
+
+	@media (max-width: 1024px) {
+		.nl-bg-tint {
+			background: linear-gradient(
+				180deg,
+				rgba(15, 42, 29, 0.4) 0%,
+				rgba(15, 42, 29, 0.72) 45%,
+				rgba(15, 42, 29, 0.94) 100%
+			);
+		}
+
+		.nl-wrap {
+			justify-content: center;
+			padding-top: 220px;
+		}
+
+		.nl-card {
+			max-width: 560px;
+		}
+	}
+
+	@media (max-width: 560px) {
+		.nl-wrap {
+			padding: 0;
+		}
+
+		.nl-card {
+			padding: 30px 24px;
+			border-radius: 0;
+		}
+
+		.nl-form {
+			flex-direction: column;
+		}
+
+		.nl-form input {
+			flex: none;
+			width: 100%;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.btn,
+		.btn-accent::after,
+		.nl-form input,
+		.chk .box,
+		.chk .box svg {
+			transition: none !important;
+		}
+	}
+</style>

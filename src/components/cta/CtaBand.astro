@@ -1,0 +1,174 @@
+---
+import { ctaBand as d } from '../../data/cta';
+---
+
+<section class="cta-band" aria-labelledby="cta-band-title">
+	<spotlight-glow class="spot" aria-hidden="true"></spotlight-glow>
+	<div class="wrap">
+		<span class="eyebrow">{d.eyebrow}</span>
+		<h2 id="cta-band-title">
+			{d.lead}
+			<b>{d.highlight}</b>
+		</h2>
+		<a href={d.cta.href} class="btn">
+			{d.cta.label}
+			<svg
+				class="ic"
+				width="16"
+				height="16"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				aria-hidden="true"
+			>
+				<path d="M5 12h14M13 6l6 6-6 6" />
+			</svg>
+		</a>
+	</div>
+</section>
+
+<style>
+	.cta-band {
+		position: relative;
+		overflow: hidden;
+		background: linear-gradient(135deg, #16300f 0%, var(--fen-green-950) 38%, var(--fen-green-850) 75%, #365a2f 100%);
+		padding: 88px var(--gutter);
+	}
+
+	.spot {
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		background: radial-gradient(520px circle at var(--mx, 70%) var(--my, 20%), rgba(195, 211, 55, 0.14), transparent 60%);
+		transition: background 0.3s var(--ease-out);
+	}
+
+	.wrap {
+		position: relative;
+		max-width: 1200px;
+		margin: 0 auto;
+		display: flex;
+		flex-direction: column;
+		gap: 22px;
+	}
+
+	.eyebrow {
+		font-size: 13px;
+		font-weight: 600;
+		letter-spacing: 0.18em;
+		text-transform: uppercase;
+		color: var(--fen-lime-mist);
+	}
+
+	h2 {
+		margin: 0;
+		font-weight: 400;
+		font-size: clamp(22px, 2.4vw, 28px);
+		line-height: 1.35;
+		color: #fff;
+	}
+
+	h2 b {
+		display: block;
+		margin-top: 2px;
+		font-weight: 700;
+		font-size: clamp(30px, 4vw, 52px);
+		line-height: 1.1;
+		letter-spacing: -0.01em;
+		color: var(--fen-accent);
+	}
+
+	.btn {
+		position: relative;
+		overflow: hidden;
+		isolation: isolate;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 10px;
+		width: max-content;
+		margin-top: 6px;
+		height: 54px;
+		padding: 0 30px;
+		border-radius: var(--r-pill);
+		border: none;
+		font-family: var(--fen-font);
+		font-size: 15px;
+		font-weight: 600;
+		text-decoration: none;
+		cursor: pointer;
+		white-space: nowrap;
+		background: var(--fen-lime-mist);
+		color: var(--fen-green-950);
+		transition:
+			transform var(--dur) var(--ease-out),
+			box-shadow var(--dur) var(--ease-out),
+			background-color var(--dur) var(--ease-out);
+	}
+
+	.btn:hover {
+		background: #fff;
+		box-shadow: 0 14px 30px -12px rgba(0, 0, 0, 0.45);
+		transform: translateY(-2px);
+	}
+
+	.btn:active {
+		transform: translateY(0) scale(0.96);
+		transition-duration: var(--dur-press);
+	}
+
+	.btn .ic {
+		flex-shrink: 0;
+		transition: transform var(--dur) var(--ease-spring);
+	}
+
+	.btn:hover .ic {
+		transform: translateX(4px);
+	}
+
+	@media (max-width: 760px) {
+		.cta-band {
+			padding: 64px var(--gutter);
+		}
+
+		h2 b {
+			font-size: clamp(28px, 9vw, 38px);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.spot {
+			display: none;
+		}
+
+		.btn {
+			transition: none;
+		}
+	}
+</style>
+
+<script>
+	class SpotlightGlow extends HTMLElement {
+		private wired = false;
+
+		connectedCallback() {
+			const band = this.closest<HTMLElement>('.cta-band');
+			if (!band || this.wired) return;
+			this.wired = true;
+
+			if (!window.matchMedia('(hover: hover)').matches) return;
+			if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+			band.addEventListener('pointermove', (e: PointerEvent) => {
+				const r = band.getBoundingClientRect();
+				band.style.setProperty('--mx', `${((e.clientX - r.left) / r.width) * 100}%`);
+				band.style.setProperty('--my', `${((e.clientY - r.top) / r.height) * 100}%`);
+			});
+		}
+	}
+
+	customElements.define('spotlight-glow', SpotlightGlow);
+</script>

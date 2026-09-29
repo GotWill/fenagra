@@ -1,0 +1,238 @@
+---
+import { Image } from 'astro:assets';
+import { partners } from '../../data/partners';
+
+// importa a pasta inteira de uma vez — não precisa de um import por logo
+const images = import.meta.glob<{ default: ImageMetadata }>(
+	'/src/assets/images/partners/*.{png,jpg,jpeg,webp,svg}',
+	{ eager: true },
+);
+
+function getImage(file: string) {
+	const mod = images[`/src/assets/images/partners/${file}`];
+	if (!mod) {
+		throw new Error(`Logo não encontrado: src/assets/images/partners/${file}`);
+	}
+	return mod.default;
+}
+
+// duplica a lista para o loop do carrossel ficar contínuo, sem precisar de JS
+const apoioLoop = [...partners.apoio, ...partners.apoio];
+const midiasLoop = [...partners.midias, ...partners.midias];
+---
+
+<section class="partners" aria-labelledby="partners-title">
+	<div class="p-head">
+		<span class="eyebrow">Quem torna a Fenagra possível</span>
+		<h2 id="partners-title">Realização, apoio e mídia</h2>
+	</div>
+
+	<div class="p-block">
+		<div class="p-block-head"><b>Realização</b><span class="rule"></span></div>
+		<div class="p-static">
+			{
+				partners.realizacao.map((p) => (
+					<a class="slot" href={p.href} target="_blank" rel="noopener" aria-label={p.name}>
+						<Image src={getImage(p.file)} alt={p.name} loading="lazy" />
+					</a>
+				))
+			}
+		</div>
+	</div>
+
+	<div class="p-block">
+		<div class="p-block-head"><b>Apoio</b><span class="rule"></span></div>
+		<div class="belt">
+			<div class="belt-track dir-l">
+				{
+					apoioLoop.map((p) => (
+						<a class="slot" href={p.href} target="_blank" rel="noopener" aria-label={p.name}>
+							<Image src={getImage(p.file)} alt={p.name}  loading="lazy"/>
+						</a>
+					))
+				}
+			</div>
+		</div>
+	</div>
+
+	<div class="p-block">
+		<div class="p-block-head"><b>Mídias parceiras</b><span class="rule"></span></div>
+		<div class="belt">
+			<div class="belt-track dir-r">
+				{
+					midiasLoop.map((p) => (
+						<a class="slot" href={p.href} target="_blank" rel="noopener" aria-label={p.name}>
+							<Image src={getImage(p.file)} alt={p.name}  loading="lazy" />
+						</a>
+					))
+				}
+			</div>
+		</div>
+	</div>
+</section>
+
+<style>
+	.partners {
+		background: var(--fen-cream);
+		padding: 88px 0;
+		overflow: hidden;
+	}
+
+	.eyebrow {
+		font-size: 13px;
+		font-weight: 600;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		color: var(--fen-leaf);
+	}
+
+	.p-head {
+		text-align: center;
+		max-width: 640px;
+		margin: 0 auto 56px;
+		display: flex;
+		flex-direction: column;
+		gap: 14px;
+		padding: 0 var(--gutter);
+	}
+
+	.p-head h2 {
+		margin: 0;
+		font-weight: 700;
+		font-size: clamp(26px, 3vw, 34px);
+		color: var(--fen-green-900);
+	}
+
+	.p-block {
+		margin-bottom: 48px;
+	}
+
+	.p-block:last-child {
+		margin-bottom: 0;
+	}
+
+	.p-block-head {
+		display: flex;
+		align-items: center;
+		gap: 14px;
+		max-width: 1200px;
+		margin: 0 auto 18px;
+		padding: 0 var(--gutter);
+	}
+
+	.p-block-head b {
+		font-size: 15px;
+		font-weight: 700;
+		color: var(--fen-green-900);
+		white-space: nowrap;
+	}
+
+	.p-block-head .rule {
+		flex: 1;
+		height: 1px;
+		background: var(--fen-line);
+	}
+
+	.p-static {
+		max-width: 1200px;
+		margin: 0 auto;
+		padding: 0 var(--gutter);
+		display: flex;
+		justify-content: center;
+		gap: 24px;
+		flex-wrap: wrap;
+	}
+
+	/* ---- logos ---- */
+	.slot {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 14px 18px;
+		border-radius: 14px;
+		transition:
+			transform 220ms var(--ease-out),
+			border-color 220ms var(--ease-out),
+			box-shadow 220ms var(--ease-out);
+	}
+
+
+
+	.slot :global(img) {
+		max-width: 100%;
+		height: auto;
+		display: block;
+	}
+
+	.slot:hover :global(img) {
+		filter: grayscale(0);
+		opacity: 1;
+	}
+
+	.p-static .slot {
+		width: 220px;
+		height: 96px;
+	}
+
+	.belt .slot {
+		width: 150px;
+		height: 80px;
+		flex-shrink: 0;
+	}
+
+	/* ---- faixa contínua ---- */
+	.belt {
+		position: relative;
+		max-width: 1200px;
+		margin: 0 auto;
+		overflow: hidden;
+		-webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+		mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+	}
+
+	.belt-track {
+		display: flex;
+		width: max-content;
+		gap: 14px;
+		padding: 0 var(--gutter);
+	}
+
+	.belt-track.dir-l {
+		animation: belt-l 34s linear infinite;
+	}
+
+	.belt-track.dir-r {
+		animation: belt-r 34s linear infinite;
+	}
+
+	.belt:hover .belt-track {
+		animation-play-state: paused;
+	}
+
+	@keyframes belt-l {
+		to {
+			transform: translateX(-50%);
+		}
+	}
+
+	@keyframes belt-r {
+		from {
+			transform: translateX(-50%);
+		}
+		to {
+			transform: translateX(0);
+		}
+	}
+
+	@media (max-width: 560px) {
+		.p-static {
+			flex-wrap: wrap;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.belt-track {
+			animation: none !important;
+		}
+	}
+</style>

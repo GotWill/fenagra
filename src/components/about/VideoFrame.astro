@@ -1,0 +1,58 @@
+---
+interface Props {
+	class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<div class:list={['video-frame', className]}>
+	<div class="accent-block" aria-hidden="true"></div>
+	<div class="frame">
+		<slot />
+	</div>
+</div>
+
+<style>
+	.video-frame {
+		position: relative;
+		padding: 0 32px 32px 0;
+	}
+
+	.accent-block {
+		position: absolute;
+		left: 32px;
+		top: 32px;
+		right: 0;
+		bottom: 0;
+		border-radius: var(--r-32);
+		background: var(--fen-accent);
+	}
+
+	.frame {
+		position: relative;
+		z-index: 1;
+		aspect-ratio: 3 / 2;
+		border-radius: var(--r-24);
+		overflow: hidden;
+		box-shadow: var(--sh-card);
+	}
+
+	@media (max-width: 1024px) {
+		.frame {
+			height: auto;
+			aspect-ratio: 16 / 9;
+		}
+	}
+
+	@media (max-width: 640px) {
+		.video-frame {
+			padding: 0 16px 16px 0;
+		}
+
+		.accent-block {
+			left: 16px;
+			top: 16px;
+		}
+	}
+</style>

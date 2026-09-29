@@ -1,0 +1,49 @@
+---
+export type ChipVariant = 'accent' | 'glass';
+
+interface Props {
+	variant?: ChipVariant;
+	class?: string;
+}
+
+const { variant = 'accent', class: className } = Astro.props;
+---
+
+<span class:list={['chip', `chip--${variant}`, className]}>
+	<slot />
+</span>
+
+<style>
+	.chip {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		padding: 8px 16px;
+		border-radius: var(--r-pill);
+		font-size: 13px;
+		font-weight: 600;
+		line-height: 1;
+		white-space: nowrap;
+	}
+
+	.chip--accent {
+		background: var(--fen-accent);
+		color: var(--fen-green-950);
+	}
+
+	.chip--glass {
+		border: 1px solid var(--fen-green-sage);
+		background: rgba(31, 59, 28, 0.35);
+		backdrop-filter: blur(8px);
+		-webkit-backdrop-filter: blur(8px);
+		color: #fff;
+		font-weight: 500;
+	}
+
+	@media (max-width: 640px) {
+		.chip {
+			padding: 6px 12px;
+			font-size: 12px;
+		}
+	}
+</style>
